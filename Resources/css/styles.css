@@ -1,3 +1,21 @@
 body{
-	background-image: url('../images/Background.jpg')
+	background-image: url('../images/Background.jpg');
+	margin: 2% 0% 0% 0%;
+}
+
+#productTable{
+    height: 300px;
+}
+
+#productTable tr{
+	width: 96%;
+	display: inline-table;
+	table-layout: fixed;
+}
+
+#productTable tbody{
+    overflow-y: scroll;      
+    height: 200px;
+    width: 96%;
+    position: absolute;
 }
