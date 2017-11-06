@@ -41,9 +41,17 @@ app.on('activate', () => {
 
 ipcMain.on('newItem', function(event, args){
 	newItem = args;
-	products[newItem.name] = newItem;
-	fs.writeFile(ROOT+'products.json', JSON.stringify(products), function(err){ if(err) win.webContents.send('warning', err); });
+	var name = newItem.name.replace(' ', '_');
+	products[name] = newItem;
+	fs.writeFileSync(ROOT+'products.json', JSON.stringify(products));
 	win.webContents.send('productList', products);
+});
+
+ipcMain.on('removeItems', function(event, args){
+	for(var toRemove in args){
+		if(products[args[toRemove]]) delete products[args[toRemove]];
+	}
+	fs.writeFileSync(ROOT+'products.json', JSON.stringify(products));
 });
 
 ipcMain.on('getProducts', function(){

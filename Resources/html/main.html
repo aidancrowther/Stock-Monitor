@@ -43,7 +43,7 @@
 							<table class='table table-fixedheader' id='productTable'>
 								<thead>
 									<tr>
-										<th class='tablecell'>Select</th>
+										<th class='tablecell'>Select<br><input onclick="selectAll();" type="checkbox" name="selectAllBtn"></th>
 										<th class='tablecell' width: 'auto'>Product Name</th>
 										<th class='tablecell'>Product Category</th>
 										<th class='tablecell'>Product Status</th>
@@ -54,7 +54,7 @@
 								</tbody>
 							</table>
 							<button class='btn btn-default' id='removeProducts'>Remove Selected</button>
-							<button class='btn btn-default' id='removeProducts'>Update Selected</button>
+							<button class='btn btn-default' id='updateProducts'>Update Selected</button>
 							<button class='btn btn-default' id='addProduct'>Add Product</button>
 							<div id='addProductMenu' style='display:none'>
 								<hr>

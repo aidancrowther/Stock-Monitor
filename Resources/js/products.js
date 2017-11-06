@@ -1,11 +1,16 @@
 var productSettingMenu = false;
 var addProductMenu = false;
+var updatingProducts = false;
+var allChecked = false;
+var checked = [];
 var products = {};
 
 $(document).ready(function(){
 	$('#productMod').click(productMod);
 	$('#addProduct').click(addProduct);
 	$('#addNewItem').click(addNewItem);
+	$('#updateProducts').click(updateProducts);
+	$('#removeProducts').click(removeSelected);
 
 	ipcRenderer.send('getProducts');
 });
@@ -51,12 +56,101 @@ function addNewItem(){
 	else alert('Please fill out all required fields');
 }
 
+function selectAll(){
+	var element = $('input[name="selected"]');
+
+	for(var product in element){
+		if(element[product].name == 'selected') element[product].checked = !allChecked;
+	}
+
+	updateSelected();
+
+	allChecked = !allChecked;
+}
+
+function updateSelected(){
+	var element = $('input[name="selected"]');
+	checked = [];
+
+	for(var product in element){
+		if(element[product].checked) checked.push(element[product].value);
+	}
+}
+
+function updateProducts(){
+	var element = $('input[name="selected"]');
+	var toUpdate = [];
+
+	for(var product in element){
+		element[product].disabled = !updatingProducts;
+	}
+
+	$('input[name="selectAllBtn"]')[0].disabled = !updatingProducts;
+
+	for(var product in element){
+		if(element[product].value) toUpdate.push(checked.indexOf(element[product].value));
+	}
+
+	if(!updatingProducts){
+		for(var product in toUpdate){
+			var current = checked[toUpdate[product]];
+			if(current){
+				$('#'+checked[toUpdate[product]]).html(
+					'<td><input onclick="updateSelected();" type="checkbox" name="selected" value='+current+' disabled checked></td>'+
+					'<td><input class="form-control" id="'+current+'Name" value="'+products[current].name+'"></td>'+
+					'<td><input class="form-control" id="'+current+'Type" value="'+products[current].type+'"></td>'+
+					'<td><input class="form-control" id="'+current+'Status" value="'+products[current].status+'"></td>'+
+					'<td><button class="btn btn-default">Change Image</button></td>'
+				);
+			}
+			updateSelected();
+		}
+	}
+	else{
+		for(var product in toUpdate){
+			var current = checked[toUpdate[product]];
+			if(current){
+				products[current] = {
+					'name': $('#'+current+'Name').val(),
+					'type': $('#'+current+'Type').val(),
+					'status': $('#'+current+'Status').val(),
+					'image': 'default'
+				};
+			}
+			if(current){
+				ipcRenderer.send('removeItems', [current]);
+				ipcRenderer.send('newItem', products[current]);
+			}
+		}
+	}
+
+	updatingProducts = !updatingProducts;
+}
+
+function removeSelected(){
+	var element = $('input[name="selected"]');
+	var toRemove = [];
+	var list = [];
+
+	for(var product in element){
+		if(element[product].value) toRemove.push(checked.indexOf(element[product].value));
+	}
+
+	for(var product in toRemove){
+		var current = checked[toRemove[product]];
+		if(current) list.push(current);
+	}
+
+	ipcRenderer.send('removeItems', list);
+	ipcRenderer.send('getProducts');
+}
+
 ipcRenderer.on('productList', function(event, args){
 	$('#productTableHeader').html('');
 
 	for(var key in args){
-		var item = '<tr>'+
-			'<td><input type="checkbox" name="selected" value='+key+'></td>'+
+		var item = '<tr id="'+key.replace(' ', '_')+'">'+
+			'<td><input onclick="updateSelected();" type="checkbox" name="selected" value='+key.replace(' ', '_')+'></td>'+
 			'<td>'+args[key].name+'</td>'+
 			'<td>'+args[key].type+'</td>'+
 			'<td>'+args[key].status+'</td>'+
@@ -64,4 +158,6 @@ ipcRenderer.on('productList', function(event, args){
 			'</tr>';
 		$('#productTableHeader').append(item);
 	}
+
+	products = args;
 });
