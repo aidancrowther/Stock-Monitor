@@ -41,7 +41,7 @@ app.on('activate', () => {
 
 ipcMain.on('newItem', function(event, args){
 	newItem = args;
-	var name = newItem.name.replace(' ', '_');
+	var name = newItem.name.replace(/ /g, '_');
 	products[name] = newItem;
 	fs.writeFileSync(ROOT+'products.json', JSON.stringify(products));
 	win.webContents.send('productList', products);

@@ -40,7 +40,7 @@
 						<button class='btn btn-default' id='displayMod'>Display Settings</button>
 						<div id='products' style='display:none'>
 							<hr>
-							<table class='table table-fixedheader' id='productTable'>
+							<table class='table table-striped table-fixedheader' id='productTable'>
 								<thead>
 									<tr>
 										<th class='tablecell'>Select<br><input onclick="selectAll();" type="checkbox" name="selectAllBtn"></th>
@@ -53,6 +53,11 @@
 								<tbody id='productTableHeader'>
 								</tbody>
 							</table>
+							<div id='tableSearch' class='inner-addon left-addon'>
+								<i class='glyphicon glyphicon-search'></i>
+								<input id='tableSearchBox' type='text' class='form-control search-query' onkeyup='findProduct()' placeholder='Search for product'>
+								<br>
+							</div>
 							<button class='btn btn-default' id='removeProducts'>Remove Selected</button>
 							<button class='btn btn-default' id='updateProducts'>Update Selected</button>
 							<button class='btn btn-default' id='addProduct'>Add Product</button>
@@ -61,15 +66,20 @@
 								<div id='productDetails'>
 									<div class='form-group form-inline'>
 										<label for='productName'>Product Name:</label>
-										<input class='form-control' id='productName'>
+										<input class='form-control' id='productName' placeholder='Product XYZ'>
 									</div>
 									<div class='form-group form-inline'>
 										<label for='productCategory'>Product Type:</label>
-										<input class='form-control' id='productCategory'>
+										<input class='form-control' id='productCategory' placeholder='Category - Subcategory'>
 									</div>
 									<div class='form-group form-inline'>
 										<label for='productStatus'>Product Status:</label>
-										<input class='form-control' id='productStatus'>
+										<select class='form-control' id='productStatus'>
+											<option value='default' default>Default</option>
+											<option value='sale'>Sale</option>
+											<option value='clearance'>Clearance</option>
+											<option value='discontinued'>Discontinued</option>
+										</select>
 									</div>
 									<div class='form-group form-inline'>
 										<label for='productImage'>Product Image:</label>

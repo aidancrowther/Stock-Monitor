@@ -4,7 +4,8 @@ body{
 }
 
 #productTable{
-    height: 300px;
+	height: 300px;
+	margin-bottom: -5%;
 }
 
 #productTable tr{
@@ -14,8 +15,24 @@ body{
 }
 
 #productTable tbody{
-    overflow-y: scroll;      
-    height: 200px;
-    width: 96%;
-    position: absolute;
+	overflow-y: scroll;  
+	height: 200px;
+	width: 96%;
+	position: absolute;
 }
+
+.inner-addon { 
+    position: relative; 
+}
+
+.inner-addon .glyphicon {
+	position: absolute;
+	padding: 10px;
+	pointer-events: none;
+}
+
+.left-addon .glyphicon  { left:  0px;}
+.right-addon .glyphicon { right: 0px;}
+
+.left-addon input  { padding-left:  30px; }
+.right-addon input { padding-right: 30px; }

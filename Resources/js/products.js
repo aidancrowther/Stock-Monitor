@@ -31,11 +31,13 @@ function addProduct(){
 		$('#addProductMenu').css('display', '');
 		addProductMenu = true;
 		$('#productTable').css('display', 'none');
+		$('#tableSearch').css('display', 'none');
 	}
 	else{
 		$('#addProductMenu').css('display', 'none');
 		addProductMenu = false;
 		$('#productTable').css('display', '');
+		$('#tableSearch').css('display', '');
 	}
 }
 
@@ -81,6 +83,9 @@ function updateProducts(){
 	var element = $('input[name="selected"]');
 	var toUpdate = [];
 
+	if(!updatingProducts) $('#updateProducts').html('Apply Changes');
+	else $('#updateProducts').html('Update Selected');
+
 	for(var product in element){
 		element[product].disabled = !updatingProducts;
 	}
@@ -99,9 +104,15 @@ function updateProducts(){
 					'<td><input onclick="updateSelected();" type="checkbox" name="selected" value='+current+' disabled checked></td>'+
 					'<td><input class="form-control" id="'+current+'Name" value="'+products[current].name+'"></td>'+
 					'<td><input class="form-control" id="'+current+'Type" value="'+products[current].type+'"></td>'+
-					'<td><input class="form-control" id="'+current+'Status" value="'+products[current].status+'"></td>'+
+					'<td><select id="'+current+'Status" class="form-control">'+
+						'<option value="default">Default</option>'+
+						'<option value="sale">Sale</option>'+
+						'<option value="clearance">Clearance</option>'+
+						'<option value="discontinued">Discontinued</option>'+
+					'</select></td>'+
 					'<td><button class="btn btn-default">Change Image</button></td>'
 				);
+				$('#'+current+'Status').val(products[current].status);
 			}
 			updateSelected();
 		}
@@ -122,6 +133,7 @@ function updateProducts(){
 				ipcRenderer.send('newItem', products[current]);
 			}
 		}
+		updateSelected();
 	}
 
 	updatingProducts = !updatingProducts;
@@ -145,12 +157,30 @@ function removeSelected(){
 	ipcRenderer.send('getProducts');
 }
 
+function findProduct(){
+	var input = $('#tableSearchBox').val();
+	var table = document.getElementById("productTableHeader");
+	var tr = table.getElementsByTagName("tr");
+
+	for(var i=0; i<tr.length; i++){
+		var rowMatch = false;
+		td = tr[i].getElementsByTagName("td");
+		for(var j=1; j<td.length; j++){
+			if(td[j].innerHTML.indexOf(input) >= 0) rowMatch = true;
+		}
+		if(rowMatch) tr[i].style.display = '';
+		else tr[i].style.display = 'none';
+	}
+}
+
 ipcRenderer.on('productList', function(event, args){
 	$('#productTableHeader').html('');
 
 	for(var key in args){
-		var item = '<tr id="'+key.replace(' ', '_')+'">'+
-			'<td><input onclick="updateSelected();" type="checkbox" name="selected" value='+key.replace(' ', '_')+'></td>'+
+		var alreadySelected = '';
+		if(checked.indexOf(key) >= 0) alreadySelected = ' checked';
+		var item = '<tr id="'+key.replace(/ /g, '_')+'">'+
+			'<td><input onclick="updateSelected();" type="checkbox" name="selected" value='+key.replace(/ /g, '_')+alreadySelected+'></td>'+
 			'<td>'+args[key].name+'</td>'+
 			'<td>'+args[key].type+'</td>'+
 			'<td>'+args[key].status+'</td>'+
