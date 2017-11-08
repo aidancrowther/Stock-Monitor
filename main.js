@@ -4,9 +4,11 @@ const url = require('url');
 const fs = require('fs');
 const ROOT = app.getAppPath()+'/Resources/Data/';
 
+var images = [];
 var products = {};
 
 if(!fs.existsSync(ROOT)) fs.mkdirSync(ROOT);
+if(!fs.existsSync(ROOT+'Images/')) fs.mkdirSync(ROOT+'Images/');
 if(!fs.existsSync(ROOT+'products.json')) fs.writeFileSync(ROOT+'products.json', JSON.stringify(products));
 
 let win;
@@ -58,3 +60,24 @@ ipcMain.on('getProducts', function(){
 	products = JSON.parse(fs.readFileSync(ROOT+'products.json'));
 	win.webContents.send('productList', products);
 });
+
+ipcMain.on('newImage', function(event, args){
+	images.push(args[1]);
+	fs.writeFileSync(ROOT+'images.json', JSON.stringify(images));
+	if(!fs.existsSync(ROOT+'Images/'+args[1])) copySync(args[0], ROOT+'Images/'+args[1]);
+	win.webContents.send('getImages', images);
+});
+
+ipcMain.on('getImages', function(){
+	if(!images) images = JSON.parse(fs.readFileSync(ROOT+'images.json'));
+	win.webContents.send('getImages', images);
+});
+
+function copySync(src, dest){
+	if (!fs.existsSync(src)) console.log('Source doesn\'t exist');
+
+	var inStr = fs.createReadStream(src);
+	var outStr = fs.createWriteStream(dest);
+
+	inStr.pipe(outStr);
+}

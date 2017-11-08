@@ -2,8 +2,11 @@ var productSettingMenu = false;
 var addProductMenu = false;
 var updatingProducts = false;
 var allChecked = false;
+var selectedImage = 'default.jpg';
+var buttonHtml = "<form id='imageForm'><input type='file' style='display:none' id='productImageChoice' onchange='selectImage();'></form>";
 var checked = [];
 var products = {};
+var images = [];
 
 $(document).ready(function(){
 	$('#productMod').click(productMod);
@@ -13,6 +16,7 @@ $(document).ready(function(){
 	$('#removeProducts').click(removeSelected);
 
 	ipcRenderer.send('getProducts');
+	ipcRenderer.send('getImages');
 });
 
 function productMod(){
@@ -45,16 +49,31 @@ function addNewItem(){
 	var newProduct = {};
 	var valid = true;
 
-	if($('#productName').val()) newProduct['name'] = $('#productName').val();
+	if($('#productName').val()){
+		newProduct['name'] = $('#productName').val();
+	}
 	else valid = false;
-	if($('#productCategory').val()) newProduct['type'] = $('#productCategory').val().toLowerCase();
+	if($('#productCategory').val()){
+		newProduct['type'] = $('#productCategory').val().toLowerCase();
+	}
 	else valid = false;
-	if($('#productStatus').val()) newProduct['status'] = $('#productStatus').val().toLowerCase();
+	if($('#productStatus').val()){
+		newProduct['status'] = $('#productStatus').val().toLowerCase();
+	}
 	else valid = false;
-	if($('#productImage').val()) newProduct['image'] = $('#productImage').val();
-	else newProduct['image'] = 'default';
+	if(selectedImage != ''){
+		newProduct['image'] = selectedImage;
+	}
+	else newProduct['image'] = 'default.jpg';
 
-	if(valid) ipcRenderer.send('newItem', newProduct);
+	if(valid){
+		$('#productName').val('');
+		$('#productCategory').val('');
+		$('#productStatus').val('default');
+		$('#imageForm')[0].reset();
+
+		ipcRenderer.send('newItem', newProduct);
+	}
 	else alert('Please fill out all required fields');
 }
 
@@ -110,7 +129,7 @@ function updateProducts(){
 						'<option value="clearance">Clearance</option>'+
 						'<option value="discontinued">Discontinued</option>'+
 					'</select></td>'+
-					'<td><button class="btn btn-default">Change Image</button></td>'
+					'<td><label class="btn btn-file btn-default"><input type="file" style="display:none" id='+current+'"Image"></input></label></td>'
 				);
 				$('#'+current+'Status').val(products[current].status);
 			}
@@ -145,7 +164,10 @@ function removeSelected(){
 	var list = [];
 
 	for(var product in element){
-		if(element[product].value) toRemove.push(checked.indexOf(element[product].value));
+		if(element[product].value){
+			toRemove.push(checked.indexOf(element[product].value));
+			element[product].checked = false;
+		}
 	}
 
 	for(var product in toRemove){
@@ -173,12 +195,31 @@ function findProduct(){
 	}
 }
 
+function selectImage(){
+
+	var file = 'default.jpg';
+
+	if($('#productImageChoice')[0]['files'][0]){
+		var filePath = $('#productImageChoice')[0]['files'][0]['path'];
+		var fileName = filePath.split('/')[filePath.split('/').length-1];
+		var fileTypes = ['jpg', 'jpeg', 'png'];
+
+		if(fileTypes.indexOf(fileName.split('.')[1].toLowerCase()) >= 0){
+			ipcRenderer.send('newImage', [filePath, fileName]);
+			file = fileName;
+		}
+	}
+
+	$('#productImage').html(file+buttonHtml);
+	$('#imageForm')[0].reset();
+	selectedImage = file;
+}
+
 ipcRenderer.on('productList', function(event, args){
 	$('#productTableHeader').html('');
 
 	for(var key in args){
 		var alreadySelected = '';
-		if(checked.indexOf(key) >= 0) alreadySelected = ' checked';
 		var item = '<tr id="'+key.replace(/ /g, '_')+'">'+
 			'<td><input onclick="updateSelected();" type="checkbox" name="selected" value='+key.replace(/ /g, '_')+alreadySelected+'></td>'+
 			'<td>'+args[key].name+'</td>'+
@@ -190,4 +231,8 @@ ipcRenderer.on('productList', function(event, args){
 	}
 
 	products = args;
+});
+
+ipcRenderer.on('getImages', function(event, args){
+	images = args;
 });

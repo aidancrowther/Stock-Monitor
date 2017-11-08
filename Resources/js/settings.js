@@ -1,4 +1,4 @@
-﻿const { ipcRenderer, remote } = require('electron');
+﻿const { ipcRenderer, remote, shell } = require('electron');
 
 var settingsModal = false;
 
