@@ -4,12 +4,14 @@ const url = require('url');
 const fs = require('fs');
 const ROOT = app.getAppPath()+'/Resources/Data/';
 
-var images = [];
+var images = fs.readdirSync(ROOT+'/Images/');
+var categories = [];
 var products = {};
 
 if(!fs.existsSync(ROOT)) fs.mkdirSync(ROOT);
 if(!fs.existsSync(ROOT+'Images/')) fs.mkdirSync(ROOT+'Images/');
 if(!fs.existsSync(ROOT+'products.json')) fs.writeFileSync(ROOT+'products.json', JSON.stringify(products));
+if(!fs.existsSync(ROOT+'categories.json')) fs.writeFileSync(ROOT+'categories.json', JSON.stringify(categories));
 
 let win;
 
@@ -62,16 +64,40 @@ ipcMain.on('getProducts', function(){
 });
 
 ipcMain.on('newImage', function(event, args){
-	images.push(args[1]);
-	fs.writeFileSync(ROOT+'images.json', JSON.stringify(images));
+	if(images.indexOf(args[0]) <= 0) images.push(args[1]);
 	if(!fs.existsSync(ROOT+'Images/'+args[1])) copySync(args[0], ROOT+'Images/'+args[1]);
 	win.webContents.send('getImages', images);
 });
 
 ipcMain.on('getImages', function(){
-	if(!images) images = JSON.parse(fs.readFileSync(ROOT+'images.json'));
+	images = fs.readdirSync(ROOT+'/Images/');
 	win.webContents.send('getImages', images);
 });
+
+ipcMain.on('newCategory', function(event, args){
+	if(categories.indexOf(args) <= 0){
+		categories.push(args);
+		updateCategories();
+	}
+});
+
+ipcMain.on('removeCategory', function(event, args){
+	if(categories.indexOf(args) >= 0){
+		categories.splice(categories.indexOf(args), 1);
+		updateCategories()
+	}
+});
+
+ipcMain.on('getCategories', function(event, args){
+	categories = JSON.parse(fs.readFileSync(ROOT+'categories.json'));
+	win.webContents.send('getCategories', categories);
+})
+
+function updateCategories(){
+	fs.writeFileSync(ROOT+'categories.json', JSON.stringify(categories));
+	categories = JSON.parse(fs.readFileSync(ROOT+'categories.json'));
+	win.webContents.send('getCategories', categories);
+}
 
 function copySync(src, dest){
 	if (!fs.existsSync(src)) console.log('Source doesn\'t exist');

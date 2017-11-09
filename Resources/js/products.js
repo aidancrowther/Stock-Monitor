@@ -1,5 +1,4 @@
 var productSettingMenu = false;
-var addProductMenu = false;
 var updatingProducts = false;
 var allChecked = false;
 var selectedImage = 'default.jpg';
@@ -7,6 +6,7 @@ var buttonHtml = "<form id='imageForm'><input type='file' style='display:none' i
 var checked = [];
 var products = {};
 var images = [];
+var categories = [];
 
 $(document).ready(function(){
 	$('#productMod').click(productMod);
@@ -14,9 +14,13 @@ $(document).ready(function(){
 	$('#addNewItem').click(addNewItem);
 	$('#updateProducts').click(updateProducts);
 	$('#removeProducts').click(removeSelected);
+	$('#addCategory').click(addCategory);
+	$('#addNewCategory').click(addNewCategory);
+	$('#removeCategory').click(removeCategory);
 
 	ipcRenderer.send('getProducts');
 	ipcRenderer.send('getImages');
+	ipcRenderer.send('getCategories');
 });
 
 function productMod(){
@@ -31,17 +35,60 @@ function productMod(){
 }
 
 function addProduct(){
-	if(!addProductMenu){
+	if(!$('#addProductMenu').is(':visible')){
 		$('#addProductMenu').css('display', '');
-		addProductMenu = true;
+		$('#addCategoryMenu').css('display', 'none');
 		$('#productTable').css('display', 'none');
 		$('#tableSearch').css('display', 'none');
 	}
 	else{
 		$('#addProductMenu').css('display', 'none');
-		addProductMenu = false;
 		$('#productTable').css('display', '');
 		$('#tableSearch').css('display', '');
+	}
+}
+
+function addCategory(){
+	if(!$('#addCategoryMenu').is(':visible')){
+		$('#addProductMenu').css('display', 'none');
+		$('#addCategoryMenu').css('display', '');
+		$('#productTable').css('display', 'none');
+		$('#tableSearch').css('display', 'none');
+	}
+	else{
+		$('#addCategoryMenu').css('display', 'none');
+		$('#productTable').css('display', '');
+		$('#tableSearch').css('display', '');
+	}
+}
+
+function addNewCategory(){
+	var category = $('#categoryName').val().toLowerCase();
+	$('#categoryName').val('');
+
+	if(categories.indexOf(category) < 0 && category != ''){
+		ipcRenderer.send('newCategory', category);
+		$('#categoryAddSuccess').css('display', '');
+		clearDisplay('#categoryAddSuccess');
+	}
+	else{
+		$('#categoryAddFail').css('display', '');
+		clearDisplay('#categoryAddFail');
+	}
+}
+
+function removeCategory(){
+	var category = $('#categoryName').val().toLowerCase();
+	$('#categoryName').val('');
+
+	if(categories.indexOf(category) >= 0){
+		ipcRenderer.send('removeCategory', category);
+		$('#categoryRemoveSuccess').css('display', '');
+		clearDisplay('#categoryRemoveSuccess');
+	}
+	else{
+		$('#categoryRemoveFail').css('display', '');
+		clearDisplay('#categoryRemoveFail');
 	}
 }
 
@@ -72,6 +119,9 @@ function addNewItem(){
 		$('#productStatus').val('default');
 		$('#imageForm')[0].reset();
 		$('#productImage').html('Select Image'+buttonHtml);
+
+		$('#itemAddSuccess').css('display', '');
+		clearDisplay('#itemAddSuccess');
 
 		ipcRenderer.send('newItem', newProduct);
 	}
@@ -130,7 +180,7 @@ function updateProducts(){
 						'<option value="clearance">Clearance</option>'+
 						'<option value="discontinued">Discontinued</option>'+
 					'</select></td>'+
-					'<td><label class="btn btn-file btn-default"><input type="file" style="display:none" id='+current+'"Image"></input></label></td>'
+					'<td><label id="'+current+'Label" class="imageUpdate btn btn-file btn-default">'+products[current].image+'<input type="file" style="display:none" onchange="updateImage(\''+current+'\');" id="'+current+'Image"></input></label></td>'
 				);
 				$('#'+current+'Status').val(products[current].status);
 			}
@@ -141,11 +191,14 @@ function updateProducts(){
 		for(var product in toUpdate){
 			var current = checked[toUpdate[product]];
 			if(current){
+
+				finalImage = $('#'+current+'Label').html().split('<')[0];
+
 				products[current] = {
 					'name': $('#'+current+'Name').val(),
 					'type': $('#'+current+'Type').val(),
 					'status': $('#'+current+'Status').val(),
-					'image': 'default'
+					'image': finalImage,
 				};
 			}
 			if(current){
@@ -216,6 +269,25 @@ function selectImage(){
 	selectedImage = file;
 }
 
+function updateImage(product){
+	var inner = '<input type="file" style="display:none" onchange="updateImage(\''+product+'\');" id="'+product+'Image"></input>';
+	if($('#'+product+'Image')[0]['files'][0]['path']){
+		var filePath = $('#'+product+'Image')[0]['files'][0]['path'];
+		var fileName = filePath.split('/')[filePath.split('/').length-1];
+		var fileTypes = ['jpg', 'jpeg', 'png'];
+
+		if(fileTypes.indexOf(fileName.split('.')[1].toLowerCase()) >= 0 && images.indexOf(fileName) <= 0){
+			ipcRenderer.send('newImage', [filePath, fileName]);
+			$('#'+product+'Label').html(fileName+inner);
+		}
+	}
+}
+
+function clearDisplay(element){
+	$(element).delay(1000);
+	$(element).slideUp();
+}
+
 ipcRenderer.on('productList', function(event, args){
 	$('#productTableHeader').html('');
 
@@ -236,4 +308,8 @@ ipcRenderer.on('productList', function(event, args){
 
 ipcRenderer.on('getImages', function(event, args){
 	images = args;
+});
+
+ipcRenderer.on('getCategories', function(event, args){
+	categories = args;
 });

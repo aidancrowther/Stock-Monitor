@@ -58,11 +58,15 @@
 								<input id='tableSearchBox' type='text' class='form-control search-query' onkeyup='findProduct()' placeholder='Search for product'>
 								<br>
 							</div>
-							<button class='btn btn-default' id='removeProducts'>Remove Selected</button>
+							<button class='btn btn-danger' id='removeProducts'>Remove Selected</button>
 							<button class='btn btn-default' id='updateProducts'>Update Selected</button>
 							<button class='btn btn-default' id='addProduct'>Add Product</button>
+							<button class='btn btn-default' id='addCategory'>Add/Remove Category</button> 
 							<div id='addProductMenu' style='display:none'>
 								<hr>
+								<div class='alert alert-success' id='itemAddSuccess' style='display:none'>
+									<strong>Success!</strong> Item added successfuly
+								</div>
 								<div id='productDetails'>
 									<div class='form-group form-inline'>
 										<label for='productName'>Product Name:</label>
@@ -89,7 +93,30 @@
 										</label>
 									</div>
 								</div>
-								<button class='btn btn-default' id='addNewItem'>Add Item</button>
+								<button class='btn btn-success' id='addNewItem'>Add Item</button>
+							</div>
+							<div id='addCategoryMenu' style='display:none'>
+								<hr>
+								<div class='alert alert-success' id='categoryAddSuccess' style='display:none'>
+									<strong>Success!</strong> Category added succesfully
+								</div>
+								<div class='alert alert-success' id='categoryRemoveSuccess' style='display:none'>
+									<strong>Success!</strong> Category removed succesfully
+								</div>
+								<div class='alert alert-danger' id='categoryRemoveFail' style='display:none'>
+									<strong>Error!</strong> Unable to remove category
+								</div>
+								<div class='alert alert-danger' id='categoryAddFail' style='display:none'>
+									<strong>Error!</strong> Unable to add category
+								</div>
+								<div id='categoryDetails'>
+									<div class='form-group form-inline'>
+										<label for='categoryName'>Category Name</label>
+										<input class='form-control' id='categoryName' placeholder='Category Name'>
+									</div>
+									<button class='btn btn-success' id='addNewCategory'>Add Category</button>
+									<button class='btn btn-danger' id='removeCategory'>Remove Category</button>
+								</div>
 							</div>
 						</div>
 					</div>
