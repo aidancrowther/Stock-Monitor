@@ -71,6 +71,7 @@ function addNewItem(){
 		$('#productCategory').val('');
 		$('#productStatus').val('default');
 		$('#imageForm')[0].reset();
+		$('#productImage').html('Select Image'+buttonHtml);
 
 		ipcRenderer.send('newItem', newProduct);
 	}
