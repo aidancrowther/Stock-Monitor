@@ -23,6 +23,16 @@ $(document).ready(function(){
 	ipcRenderer.send('getCategories');
 });
 
+function updateCategories(selectMenu, defaultSelection){
+	$('#'+selectMenu).html('');
+	var defaultOption = '';
+	for(var category in categories){
+		defaultOption = '';
+		if(category == defaultSelection) defaultOption = 'selected';
+		$('#'+selectMenu).append('<option value="'+categories[category]+'"'+defaultOption+'>'+categories[category]+'</option>');
+	}
+}
+
 function productMod(){
 	if(!productSettingMenu){
 		$('#products').css('display', '');
@@ -173,7 +183,7 @@ function updateProducts(){
 				$('#'+checked[toUpdate[product]]).html(
 					'<td><input onclick="updateSelected();" type="checkbox" name="selected" value='+current+' disabled checked></td>'+
 					'<td><input class="form-control" id="'+current+'Name" value="'+products[current].name+'"></td>'+
-					'<td><input class="form-control" id="'+current+'Type" value="'+products[current].type+'"></td>'+
+					'<td><select class="form-control" id="'+current+'Type"></select></td>'+
 					'<td><select id="'+current+'Status" class="form-control">'+
 						'<option value="default">Default</option>'+
 						'<option value="sale">Sale</option>'+
@@ -183,6 +193,7 @@ function updateProducts(){
 					'<td><label id="'+current+'Label" class="imageUpdate btn btn-file btn-default">'+products[current].image+'<input type="file" style="display:none" onchange="updateImage(\''+current+'\');" id="'+current+'Image"></input></label></td>'
 				);
 				$('#'+current+'Status').val(products[current].status);
+				updateCategories(current+'Type', categories.indexOf(products[current].type));
 			}
 			updateSelected();
 		}
@@ -276,7 +287,7 @@ function updateImage(product){
 		var fileName = filePath.split('/')[filePath.split('/').length-1];
 		var fileTypes = ['jpg', 'jpeg', 'png'];
 
-		if(fileTypes.indexOf(fileName.split('.')[1].toLowerCase()) >= 0 && images.indexOf(fileName) <= 0){
+		if(fileTypes.indexOf(fileName.split('.')[1].toLowerCase()) >= 0){
 			ipcRenderer.send('newImage', [filePath, fileName]);
 			$('#'+product+'Label').html(fileName+inner);
 		}
@@ -312,4 +323,5 @@ ipcRenderer.on('getImages', function(event, args){
 
 ipcRenderer.on('getCategories', function(event, args){
 	categories = args;
+	updateCategories('productCategory', 0);
 });
