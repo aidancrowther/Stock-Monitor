@@ -1,4 +1,3 @@
-var productSettingMenu = false;
 var updatingProducts = false;
 var allChecked = false;
 var selectedImage = 'default.jpg';
@@ -34,13 +33,12 @@ function updateCategories(selectMenu, defaultSelection){
 }
 
 function productMod(){
-	if(!productSettingMenu){
+	if(!$('#products').is(':visible')){
 		$('#products').css('display', '');
-		productSettingMenu = true;
+		$('#layout').css('display', 'none');
 	}
 	else{
 		$('#products').css('display', 'none');
-		productSettingMenu = false;
 	}
 }
 
