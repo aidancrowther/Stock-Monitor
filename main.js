@@ -6,12 +6,14 @@ const ROOT = app.getAppPath()+'/Resources/Data/';
 
 var images = fs.readdirSync(ROOT+'/Images/');
 var categories = [];
+var subCategories = [];
 var products = {};
 
 if(!fs.existsSync(ROOT)) fs.mkdirSync(ROOT);
 if(!fs.existsSync(ROOT+'Images/')) fs.mkdirSync(ROOT+'Images/');
 if(!fs.existsSync(ROOT+'products.json')) fs.writeFileSync(ROOT+'products.json', JSON.stringify(products));
 if(!fs.existsSync(ROOT+'categories.json')) fs.writeFileSync(ROOT+'categories.json', JSON.stringify(categories));
+if(!fs.existsSync(ROOT+'subCategories.json')) fs.writeFileSync(ROOT+'subCategories.json', JSON.stringify(subCategories));
 
 let win;
 
@@ -81,6 +83,13 @@ ipcMain.on('newCategory', function(event, args){
 	}
 });
 
+ipcMain.on('newSubCategory', function(event, args){
+	if(subCategories.indexOf(args) <= 0){
+		subCategories.push(args);
+		updateSubCategories();
+	}
+});
+
 ipcMain.on('removeCategory', function(event, args){
 	if(categories.indexOf(args) >= 0){
 		categories.splice(categories.indexOf(args), 1);
@@ -88,15 +97,33 @@ ipcMain.on('removeCategory', function(event, args){
 	}
 });
 
+ipcMain.on('removeSubCategory', function(event, args){
+	if(subCategories.indexOf(args) >= 0){
+		subCategories.splice(subCategories.indexOf(args), 1);
+		updateSubCategories()
+	}
+});
+
 ipcMain.on('getCategories', function(event, args){
 	categories = JSON.parse(fs.readFileSync(ROOT+'categories.json'));
 	win.webContents.send('getCategories', categories);
-})
+});
+
+ipcMain.on('getSubCategories', function(event, args){
+	subCategories = JSON.parse(fs.readFileSync(ROOT+'subCategories.json'));
+	win.webContents.send('getSubCategories', subCategories);
+});
 
 function updateCategories(){
 	fs.writeFileSync(ROOT+'categories.json', JSON.stringify(categories));
 	categories = JSON.parse(fs.readFileSync(ROOT+'categories.json'));
 	win.webContents.send('getCategories', categories);
+}
+
+function updateSubCategories(){
+	fs.writeFileSync(ROOT+'subCategories.json', JSON.stringify(subCategories));
+	subCategories = JSON.parse(fs.readFileSync(ROOT+'subCategories.json'));
+	win.webContents.send('getSubCategories', subCategories);
 }
 
 function copySync(src, dest){

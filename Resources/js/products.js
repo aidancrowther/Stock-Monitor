@@ -6,6 +6,7 @@ var checked = [];
 var products = {};
 var images = [];
 var categories = [];
+var subCategories = [];
 
 $(document).ready(function(){
 	$('#productMod').click(productMod);
@@ -14,21 +15,22 @@ $(document).ready(function(){
 	$('#updateProducts').click(updateProducts);
 	$('#removeProducts').click(removeSelected);
 	$('#addCategory').click(addCategory);
-	$('#addNewCategory').click(addNewCategory);
-	$('#removeCategory').click(removeCategory);
+	$('#updateCategory').click(updateCategory);
+	$('#updateSubCategory').click(updateSubCategory);
 
 	ipcRenderer.send('getProducts');
 	ipcRenderer.send('getImages');
 	ipcRenderer.send('getCategories');
+	ipcRenderer.send('getSubCategories');
 });
 
-function updateCategories(selectMenu, defaultSelection){
+function updateCategories(selectMenu, defaultSelection, chosenCategory){
 	$('#'+selectMenu).html('');
 	var defaultOption = '';
-	for(var category in categories){
+	for(var category in chosenCategory){
 		defaultOption = '';
 		if(category == defaultSelection) defaultOption = 'selected';
-		$('#'+selectMenu).append('<option value="'+categories[category]+'"'+defaultOption+'>'+categories[category]+'</option>');
+		$('#'+selectMenu).append('<option value="'+chosenCategory[category]+'"'+defaultOption+'>'+chosenCategory[category]+'</option>');
 	}
 }
 
@@ -44,12 +46,22 @@ function productMod(){
 
 function addProduct(){
 	if(!$('#addProductMenu').is(':visible')){
+
+		$('#removeProducts').attr('disabled', 'disabled');
+		$('#updateProducts').attr('disabled', 'disabled');
+		$('#addCategory').attr('disabled', 'disabled');
+
 		$('#addProductMenu').css('display', '');
 		$('#addCategoryMenu').css('display', 'none');
 		$('#productTable').css('display', 'none');
 		$('#tableSearch').css('display', 'none');
 	}
 	else{
+
+		$('#removeProducts').removeAttr('disabled');
+		$('#updateProducts').removeAttr('disabled');
+		$('#addCategory').removeAttr('disabled');
+
 		$('#addProductMenu').css('display', 'none');
 		$('#productTable').css('display', '');
 		$('#tableSearch').css('display', '');
@@ -58,19 +70,29 @@ function addProduct(){
 
 function addCategory(){
 	if(!$('#addCategoryMenu').is(':visible')){
+
+		$('#removeProducts').attr('disabled', 'disabled');
+		$('#updateProducts').attr('disabled', 'disabled');
+		$('#addProduct').attr('disabled', 'disabled');
+
 		$('#addProductMenu').css('display', 'none');
 		$('#addCategoryMenu').css('display', '');
 		$('#productTable').css('display', 'none');
 		$('#tableSearch').css('display', 'none');
 	}
 	else{
+
+		$('#removeProducts').removeAttr('disabled');
+		$('#updateProducts').removeAttr('disabled');
+		$('#addProduct').removeAttr('disabled');
+
 		$('#addCategoryMenu').css('display', 'none');
 		$('#productTable').css('display', '');
 		$('#tableSearch').css('display', '');
 	}
 }
 
-function addNewCategory(){
+function updateCategory(){
 	var category = $('#categoryName').val().toLowerCase();
 	$('#categoryName').val('');
 
@@ -79,24 +101,34 @@ function addNewCategory(){
 		$('#categoryAddSuccess').css('display', '');
 		clearDisplay('#categoryAddSuccess');
 	}
-	else{
-		$('#categoryAddFail').css('display', '');
-		clearDisplay('#categoryAddFail');
-	}
-}
-
-function removeCategory(){
-	var category = $('#categoryName').val().toLowerCase();
-	$('#categoryName').val('');
-
-	if(categories.indexOf(category) >= 0){
+	else if(categories.indexOf(category) >= 0){
 		ipcRenderer.send('removeCategory', category);
 		$('#categoryRemoveSuccess').css('display', '');
 		clearDisplay('#categoryRemoveSuccess');
 	}
 	else{
-		$('#categoryRemoveFail').css('display', '');
-		clearDisplay('#categoryRemoveFail');
+		$('#categoryUpdateFail').css('display', '');
+		clearDisplay('#categoryUpdateFail');
+	}
+}
+
+function updateSubCategory(){
+	var subCategory = $('#subCategoryName').val().toLowerCase();
+	$('#subCategoryName').val('');
+
+	if(subCategories.indexOf(subCategory) < 0 && subCategory != ''){
+		ipcRenderer.send('newSubCategory', subCategory);
+		$('#subCategoryAddSuccess').css('display', '');
+		clearDisplay('#subCategoryAddSuccess');
+	}
+	else if(subCategories.indexOf(subCategory) >= 0){
+		ipcRenderer.send('removeSubCategory', subCategory);
+		$('#csubCtegoryRemoveSuccess').css('display', '');
+		clearDisplay('#subCategoryRemoveSuccess');
+	}
+	else{
+		$('#subCategoryUpdateFail').css('display', '');
+		clearDisplay('#subCategoryUpdateFail');
 	}
 }
 
@@ -112,6 +144,10 @@ function addNewItem(){
 		newProduct['type'] = $('#productCategory').val().toLowerCase();
 	}
 	else valid = false;
+	if($('#productSubCategory').val()){
+		newProduct['subType'] = $('#productSubCategory').val().toLowerCase();
+	}
+	else valid = false;
 	if($('#productStatus').val()){
 		newProduct['status'] = $('#productStatus').val().toLowerCase();
 	}
@@ -124,6 +160,7 @@ function addNewItem(){
 	if(valid){
 		$('#productName').val('');
 		$('#productCategory').val('');
+		$('#productSubCategory').val('');
 		$('#productStatus').val('default');
 		$('#imageForm')[0].reset();
 		$('#productImage').html('Select Image'+buttonHtml);
@@ -161,8 +198,14 @@ function updateProducts(){
 	var element = $('input[name="selected"]');
 	var toUpdate = [];
 
-	if(!updatingProducts) $('#updateProducts').html('Apply Changes');
-	else $('#updateProducts').html('Update Selected');
+	if(!updatingProducts){
+		$('#updateProducts').html('Apply Changes');
+		$('#updateProducts').toggleClass('btn-default btn-success');
+	}
+	else{
+		$('#updateProducts').html('Update Selected');
+		$('#updateProducts').toggleClass('btn-default btn-success');
+	}
 
 	for(var product in element){
 		element[product].disabled = !updatingProducts;
@@ -175,6 +218,11 @@ function updateProducts(){
 	}
 
 	if(!updatingProducts){
+
+		$('#removeProducts').attr('disabled', 'disabled');
+		$('#addProduct').attr('disabled', 'disabled');
+		$('#addCategory').attr('disabled', 'disabled');
+
 		for(var product in toUpdate){
 			var current = checked[toUpdate[product]];
 			if(current){
@@ -182,6 +230,7 @@ function updateProducts(){
 					'<td><input onclick="updateSelected();" type="checkbox" name="selected" value='+current+' disabled checked></td>'+
 					'<td><input class="form-control" id="'+current+'Name" value="'+products[current].name+'"></td>'+
 					'<td><select class="form-control" id="'+current+'Type"></select></td>'+
+					'<td><select class="form-control" id="'+current+'SubType"></select></td>'+
 					'<td><select id="'+current+'Status" class="form-control">'+
 						'<option value="default">Default</option>'+
 						'<option value="sale">Sale</option>'+
@@ -191,12 +240,20 @@ function updateProducts(){
 					'<td><label id="'+current+'Label" class="imageUpdate btn btn-file btn-default">'+products[current].image+'<input type="file" style="display:none" onchange="updateImage(\''+current+'\');" id="'+current+'Image"></input></label></td>'
 				);
 				$('#'+current+'Status').val(products[current].status);
-				updateCategories(current+'Type', categories.indexOf(products[current].type));
+				updateCategories(current+'Type', categories.indexOf(products[current].type), categories);
+				updateCategories(current+'SubType', categories.indexOf(products[current].subType), subCategories);
 			}
 			updateSelected();
 		}
 	}
 	else{
+
+		$('[name="selectAllBtn"]').prop('checked', false);
+		allChecked = !allChecked;
+		$('#removeProducts').removeAttr('disabled');
+		$('#addProduct').removeAttr('disabled');
+		$('#addCategory').removeAttr('disabled');
+
 		for(var product in toUpdate){
 			var current = checked[toUpdate[product]];
 			if(current){
@@ -206,6 +263,7 @@ function updateProducts(){
 				products[current] = {
 					'name': $('#'+current+'Name').val(),
 					'type': $('#'+current+'Type').val(),
+					'subType': $('#'+current+'SubType').val(),
 					'status': $('#'+current+'Status').val(),
 					'image': finalImage,
 				};
@@ -238,6 +296,8 @@ function removeSelected(){
 		if(current) list.push(current);
 	}
 
+	$('[name="selectAllBtn"]').prop('checked', false);
+	allChecked = !allChecked;
 	ipcRenderer.send('removeItems', list);
 	ipcRenderer.send('getProducts');
 }
@@ -306,6 +366,7 @@ ipcRenderer.on('productList', function(event, args){
 			'<td><input onclick="updateSelected();" type="checkbox" name="selected" value='+key.replace(/ /g, '_')+alreadySelected+'></td>'+
 			'<td>'+args[key].name+'</td>'+
 			'<td>'+args[key].type+'</td>'+
+			'<td>'+args[key].subType+'</td>'+
 			'<td>'+args[key].status+'</td>'+
 			'<td>'+args[key].image+'</td>'+
 			'</tr>';
@@ -321,5 +382,10 @@ ipcRenderer.on('getImages', function(event, args){
 
 ipcRenderer.on('getCategories', function(event, args){
 	categories = args;
-	updateCategories('productCategory', 0);
+	updateCategories('productCategory', 0, categories);
+});
+
+ipcRenderer.on('getSubCategories', function(event, args){
+	subCategories = args;
+	updateCategories('productSubCategory', 0, subCategories);
 });
