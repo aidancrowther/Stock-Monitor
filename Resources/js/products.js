@@ -1,5 +1,4 @@
 var updatingProducts = false;
-var allChecked = false;
 var selectedImage = 'default.jpg';
 var buttonHtml = "<form id='imageForm'><input type='file' style='display:none' id='productImageChoice' onchange='selectImage();'></form>";
 var checked = [];
@@ -93,7 +92,7 @@ function addCategory(){
 }
 
 function updateCategory(){
-	var category = $('#categoryName').val().toLowerCase();
+	var category = $('#categoryName').val().toLowerCase().replace(/[^0-9a-z]/gi, '');
 	$('#categoryName').val('');
 
 	if(categories.indexOf(category) < 0 && category != ''){
@@ -113,7 +112,7 @@ function updateCategory(){
 }
 
 function updateSubCategory(){
-	var subCategory = $('#subCategoryName').val().toLowerCase();
+	var subCategory = $('#subCategoryName').val().toLowerCase().replace(/[^0-9a-z]/gi, '');
 	$('#subCategoryName').val('');
 
 	if(subCategories.indexOf(subCategory) < 0 && subCategory != ''){
@@ -137,7 +136,7 @@ function addNewItem(){
 	var valid = true;
 
 	if($('#productName').val()){
-		newProduct['name'] = $('#productName').val();
+		newProduct['name'] = $('#productName').val().replace(/[^0-9a-z]/gi, '');
 	}
 	else valid = false;
 	if($('#productCategory').val()){
@@ -159,8 +158,8 @@ function addNewItem(){
 
 	if(valid){
 		$('#productName').val('');
-		$('#productCategory').val('');
-		$('#productSubCategory').val('');
+		$('#productCategory').val(categories[0]);
+		$('#productSubCategory').val(subCategories[0]);
 		$('#productStatus').val('default');
 		$('#imageForm')[0].reset();
 		$('#productImage').html('Select Image'+buttonHtml);
@@ -177,12 +176,10 @@ function selectAll(){
 	var element = $('input[name="selected"]');
 
 	for(var product in element){
-		if(element[product].name == 'selected') element[product].checked = !allChecked;
+		if(element[product].name == 'selected') element[product].checked = $('[name="selectAllBtn"]').is(':checked');
 	}
 
 	updateSelected();
-
-	allChecked = !allChecked;
 }
 
 function updateSelected(){
@@ -249,7 +246,6 @@ function updateProducts(){
 	else{
 
 		$('[name="selectAllBtn"]').prop('checked', false);
-		allChecked = !allChecked;
 		$('#removeProducts').removeAttr('disabled');
 		$('#addProduct').removeAttr('disabled');
 		$('#addCategory').removeAttr('disabled');
@@ -297,7 +293,6 @@ function removeSelected(){
 	}
 
 	$('[name="selectAllBtn"]').prop('checked', false);
-	allChecked = !allChecked;
 	ipcRenderer.send('removeItems', list);
 	ipcRenderer.send('getProducts');
 }
