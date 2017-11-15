@@ -3,18 +3,19 @@ body{
 	margin: 2% 0% 0% 0%;
 }
 
-#productTable{
+.modTable{
 	height: 300px;
-	margin-bottom: -5%;
+	margin-bottom: -1%;
+	word-wrap: break-word;
 }
 
-#productTable tr{
+.modTable tr{
 	width: 96%;
 	display: inline-table;
 	table-layout: fixed;
 }
 
-#productTable tbody{
+.modTable tbody{
 	overflow-y: scroll;  
 	height: 200px;
 	width: 96%;
@@ -39,4 +40,8 @@ body{
 
 .imageUpdate{
 	overflow: hidden;
+}
+
+select{
+	min-width: 200px;
 }

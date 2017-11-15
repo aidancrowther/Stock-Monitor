@@ -2,10 +2,6 @@ var updatingProducts = false;
 var selectedImage = 'default.jpg';
 var buttonHtml = "<form id='imageForm'><input type='file' style='display:none' id='productImageChoice' onchange='selectImage();'></form>";
 var checked = [];
-var products = {};
-var images = [];
-var categories = [];
-var subCategories = [];
 
 $(document).ready(function(){
 	$('#productMod').click(productMod);
@@ -351,36 +347,3 @@ function clearDisplay(element){
 	$(element).delay(1000);
 	$(element).slideUp();
 }
-
-ipcRenderer.on('productList', function(event, args){
-	$('#productTableHeader').html('');
-
-	for(var key in args){
-		var alreadySelected = '';
-		var item = '<tr id="'+key.replace(/ /g, '_')+'">'+
-			'<td><input onclick="updateSelected();" type="checkbox" name="selected" value='+key.replace(/ /g, '_')+alreadySelected+'></td>'+
-			'<td>'+args[key].name+'</td>'+
-			'<td>'+args[key].type+'</td>'+
-			'<td>'+args[key].subType+'</td>'+
-			'<td>'+args[key].status+'</td>'+
-			'<td>'+args[key].image+'</td>'+
-			'</tr>';
-		$('#productTableHeader').append(item);
-	}
-
-	products = args;
-});
-
-ipcRenderer.on('getImages', function(event, args){
-	images = args;
-});
-
-ipcRenderer.on('getCategories', function(event, args){
-	categories = args;
-	updateCategories('productCategory', 0, categories);
-});
-
-ipcRenderer.on('getSubCategories', function(event, args){
-	subCategories = args;
-	updateCategories('productSubCategory', 0, subCategories);
-});
