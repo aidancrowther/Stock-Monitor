@@ -69,6 +69,9 @@
 								<div class='alert alert-success' id='itemAddSuccess' style='display:none'>
 									<strong>Success!</strong> Item added successfuly
 								</div>
+								<div class='alert alert-danger' id='itemAddFailure' style='display:none'>
+									<strong>Error!</strong> Item was not added
+								</div>
 								<div id='productDetails'>
 									<div class='form-group form-inline'>
 										<label for='productName'>Product Name:</label>
@@ -163,6 +166,12 @@
 							<div id='addLayoutMenu' style='display:none;'>
 								<hr>
 								<div id='layoutDetails'>
+									<div class='alert alert-success' id='layoutAddSuccess' style='display:none'>
+										<strong>Success!</strong> New layout added
+									</div>
+									<div class='alert alert-danger' id='layoutAddFailure' style='display:none'>
+										<strong>Error!</strong> Unable to add specified layout
+									</div>
 									<div class='form-group form-inline'>
 										<label for='layoutMain'>Layout Category:</label>
 										<select class='form-control' id='layoutMain'>

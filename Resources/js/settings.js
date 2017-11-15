@@ -2,6 +2,7 @@
 
 var settingsModal = false;
 var products = {};
+var layouts = {};
 var images = [];
 var categories = [];
 var subCategories = [];
@@ -29,6 +30,11 @@ function updateCategories(selectMenu, defaultSelection, chosenCategory){
 		if(category == defaultSelection) defaultOption = 'selected';
 		$('#'+selectMenu).append('<option value="'+chosenCategory[category]+'"'+defaultOption+'>'+chosenCategory[category]+'</option>');
 	}
+}
+
+function clearDisplay(element){
+	$(element).delay(3000);
+	$(element).slideUp();
 }
 
 ipcRenderer.on('getImages', function(event, args){
@@ -64,4 +70,9 @@ ipcRenderer.on('productList', function(event, args){
 	}
 
 	products = args;
+});
+
+ipcRenderer.on('getLayouts', function(event, args){
+	layouts = args;
+	updateLayouts();
 });

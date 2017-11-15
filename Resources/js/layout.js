@@ -1,6 +1,9 @@
 $(document).ready(function(){
 	$('#layoutMod').click(layoutMod);
 	$('#addLayout').click(addLayout);
+	$('#submitLayoutBtn').click(submitNewLayout);
+
+	ipcRenderer.send('getLayouts');
 });
 
 function layoutMod(){
@@ -34,6 +37,34 @@ function addLayout(){
 	}
 }
 
+function submitNewLayout(){
+	var newLayout = {};
+	var valid = true;
+
+	if($('#layoutMain').val()){
+		newLayout['main'] = $('#layoutMain').val();
+	}
+	else valid = false;
+	if($('#layoutSub').val().length){
+		newLayout['sub'] = $('#layoutSub').val();
+	}
+	else valid = false;
+
+	if(valid){
+		$('#layoutMain').val(categories[0]);
+		$('#layoutSub').val('');
+
+		$('#layoutAddSuccess').css('display', '');
+		clearDisplay('#layoutAddSuccess');
+
+		ipcRenderer.send('addLayout', newLayout);
+	}
+	else{
+		$('#layoutAddFailure').css('display', '');
+		clearDisplay('#layoutAddFailure');
+	}
+}
+
 function findLayout(){
 	var input = $('#layoutTableSearchBox').val();
 	var table = document.getElementById("layoutTableHeader");
@@ -47,5 +78,11 @@ function findLayout(){
 		}
 		if(rowMatch) tr[i].style.display = '';
 		else tr[i].style.display = 'none';
+	}
+}
+
+function updateLayouts(){
+	for(var layout in layouts){
+		console.log(layouts[layout]);
 	}
 }

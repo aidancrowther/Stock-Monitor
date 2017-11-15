@@ -8,9 +8,11 @@ var images = fs.readdirSync(ROOT+'/Images/');
 var categories = [];
 var subCategories = [];
 var products = {};
+var layouts = {};
 
 if(!fs.existsSync(ROOT)) fs.mkdirSync(ROOT);
 if(!fs.existsSync(ROOT+'Images/')) fs.mkdirSync(ROOT+'Images/');
+if(!fs.existsSync(ROOT+'layouts.json')) fs.writeFileSync(ROOT+'layouts.json', JSON.stringify(layouts));
 if(!fs.existsSync(ROOT+'products.json')) fs.writeFileSync(ROOT+'products.json', JSON.stringify(products));
 if(!fs.existsSync(ROOT+'categories.json')) fs.writeFileSync(ROOT+'categories.json', JSON.stringify(categories));
 if(!fs.existsSync(ROOT+'subCategories.json')) fs.writeFileSync(ROOT+'subCategories.json', JSON.stringify(subCategories));
@@ -61,7 +63,7 @@ ipcMain.on('removeItems', function(event, args){
 });
 
 ipcMain.on('getProducts', function(){
-	products = JSON.parse(fs.readFileSync(ROOT+'products.json'));
+	if(!Object.keys(products).length) products = JSON.parse(fs.readFileSync(ROOT+'products.json'));
 	win.webContents.send('productList', products);
 });
 
@@ -72,7 +74,7 @@ ipcMain.on('newImage', function(event, args){
 });
 
 ipcMain.on('getImages', function(){
-	images = fs.readdirSync(ROOT+'/Images/');
+	if(!images.length) images = fs.readdirSync(ROOT+'/Images/');
 	win.webContents.send('getImages', images);
 });
 
@@ -105,13 +107,26 @@ ipcMain.on('removeSubCategory', function(event, args){
 });
 
 ipcMain.on('getCategories', function(event, args){
-	categories = JSON.parse(fs.readFileSync(ROOT+'categories.json'));
+	if(!categories.length) categories = JSON.parse(fs.readFileSync(ROOT+'categories.json'));
 	win.webContents.send('getCategories', categories);
 });
 
 ipcMain.on('getSubCategories', function(event, args){
-	subCategories = JSON.parse(fs.readFileSync(ROOT+'subCategories.json'));
+	if(!subCategories.length) subCategories = JSON.parse(fs.readFileSync(ROOT+'subCategories.json'));
 	win.webContents.send('getSubCategories', subCategories);
+});
+
+ipcMain.on('getLayouts', function(event, args){
+	if(!Object.keys(layouts).length) layouts = JSON.parse(fs.readFileSync(ROOT+'layouts.json'));
+	win.webContents.send('getLayouts', layouts);
+});
+
+ipcMain.on('addLayout', function(event, args){
+	var newLayout = args;
+	var name = args['main'].replace(/ /g, '_');
+	layouts[name] = newLayout;
+	fs.writeFileSync(ROOT+'layouts.json', JSON.stringify(layouts));
+	win.webContents.send('getLayouts', layouts);
 });
 
 function updateCategories(){
