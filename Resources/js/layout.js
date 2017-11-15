@@ -81,8 +81,36 @@ function findLayout(){
 	}
 }
 
+function updateSelectedLayouts(){
+	var element = $('input[name="selectedLayout"]');
+	checkedLayouts = [];
+
+	for(var layout in element){
+		if(element[layout].checked) checkedLayouts.push(element[layout].value);
+	}
+}
+
+function selectAllLayout(){
+	var element = $('input[name="selectedLayout"]');
+
+	for(var layout in element){
+		if(element[layout].name == 'selectedLayout') element[layout].checked = $('[name="selectAllLayoutBtn"]').is(':checked');
+	}
+
+	updateSelectedLayouts();
+}
+
 function updateLayouts(){
+
+	$('#layoutTableHeader').html('');
+
 	for(var layout in layouts){
-		console.log(layouts[layout]);
+		var alreadySelected = '';
+		var item = '<tr id="'+layout.replace(/ /g, '_')+'">'+
+			'<td><input onclick="updateSelectedLayouts();" type="checkbox" name="selectedLayout" value='+layout.replace(/ /g, '_')+alreadySelected+'></td>'+
+			'<td>'+layouts[layout].main+'</td>'+
+			'<td>'+layouts[layout].sub+'</td>'+
+			'</tr>';
+		$('#layoutTableHeader').append(item);
 	}
 }
