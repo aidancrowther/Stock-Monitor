@@ -79,9 +79,10 @@ function addCategory(){
 
 function updateCategory(){
 	var category = $('#categoryName').val().toLowerCase().replace(/[^0-9a-z]/gi, '');
+	var checkCategory = category.replace(/ /g, '');
 	$('#categoryName').val('');
 
-	if(categories.indexOf(category) < 0 && category != ''){
+	if(categories.indexOf(category) < 0 && category != '' && checkCategory != ''){
 		ipcRenderer.send('newCategory', category);
 		$('#categoryAddSuccess').css('display', '');
 		clearDisplay('#categoryAddSuccess');
@@ -99,9 +100,10 @@ function updateCategory(){
 
 function updateSubCategory(){
 	var subCategory = $('#subCategoryName').val().toLowerCase().replace(/[^0-9a-z]/gi, '');
+	var checkSubCategory = subCategory.replace(/ /g, '');
 	$('#subCategoryName').val('');
 
-	if(subCategories.indexOf(subCategory) < 0 && subCategory != ''){
+	if(subCategories.indexOf(subCategory) < 0 && subCategory != '' && checkSubCategory != ''){
 		ipcRenderer.send('newSubCategory', subCategory);
 		$('#subCategoryAddSuccess').css('display', '');
 		clearDisplay('#subCategoryAddSuccess');
@@ -122,7 +124,9 @@ function addNewItem(){
 	var valid = true;
 
 	if($('#productName').val()){
-		newProduct['name'] = $('#productName').val().replace(/[^0-9a-z]/gi, '');
+		var checkContent = $('#productName').val().replace(/[^0-9a-z]/gi, '').replace(/ /g, '');
+		if(checkContent != '') newProduct['name'] = $('#productName').val().replace(/[^0-9a-z]/gi, '');
+		else valid = false;
 	}
 	else valid = false;
 	if($('#productCategory').val()){
@@ -193,13 +197,10 @@ function updateProducts(){
 		$('#updateProducts').toggleClass('btn-default btn-success');
 	}
 
-	for(var product in element){
-		element[product].disabled = !updatingProducts;
-	}
-
 	$('input[name="selectAllBtn"]')[0].disabled = !updatingProducts;
 
 	for(var product in element){
+		element[product].disabled = !updatingProducts;
 		if(element[product].value) toUpdate.push(checked.indexOf(element[product].value));
 	}
 

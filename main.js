@@ -129,6 +129,13 @@ ipcMain.on('addLayout', function(event, args){
 	win.webContents.send('getLayouts', layouts);
 });
 
+ipcMain.on('removeLayouts', function(event, args){
+	for(var toRemove in args){
+		if(layouts[args[toRemove]]) delete layouts[args[toRemove]];
+	}
+	fs.writeFileSync(ROOT+'layouts.json', JSON.stringify(layouts));
+});
+
 function updateCategories(){
 	fs.writeFileSync(ROOT+'categories.json', JSON.stringify(categories));
 	categories = JSON.parse(fs.readFileSync(ROOT+'categories.json'));
