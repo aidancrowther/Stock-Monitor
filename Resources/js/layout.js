@@ -1,6 +1,7 @@
 var checkedLayouts = [];
 var updatingLayouts = false;
 
+//Attach button functions
 $(document).ready(function(){
 	$('#layoutMod').click(layoutMod);
 	$('#addLayout').click(addLayout);
@@ -11,6 +12,7 @@ $(document).ready(function(){
 	ipcRenderer.send('getLayouts');
 });
 
+//Open/close the layout modification menu
 function layoutMod(){
 	if(!$('#layout').is(':visible')){
 		$('#layout').css('display', '');
@@ -21,6 +23,7 @@ function layoutMod(){
 	}
 }
 
+//Open/close the layout addition menu
 function addLayout(){
 	if(!$('#addLayoutMenu').is(':visible')){
 
@@ -42,6 +45,7 @@ function addLayout(){
 	}
 }
 
+//Add the new layout to the list of layouts
 function submitNewLayout(){
 	var newLayout = {};
 	var valid = true;
@@ -70,6 +74,7 @@ function submitNewLayout(){
 	}
 }
 
+//Search for a layout in the list of layouts
 function findLayout(){
 	var input = $('#layoutTableSearchBox').val();
 	var table = document.getElementById("layoutTableHeader");
@@ -86,6 +91,7 @@ function findLayout(){
 	}
 }
 
+//Update list of selected layouts
 function updateSelectedLayouts(){
 	var element = $('input[name="selectedLayout"]');
 	checkedLayouts = [];
@@ -95,17 +101,21 @@ function updateSelectedLayouts(){
 	}
 }
 
+//Update all selected layouts
 function changeSelectedLayouts(){
 	var element = $('input[name="selectedLayout"]');
 	var toUpdate = [];
 
+	//get all layouts to update
 	for(var layout in element){
 		element[layout].disabled = !updatingLayouts;
 		if(element[layout].value) toUpdate.push(checkedLayouts.indexOf(element[layout].value));
 	}
 
+	//disable select all button
 	$('input[name="selectAllLayoutBtn"]')[0].disabled = !updatingLayouts;
 
+	//disable all other buttons and allow user input for updates
 	if(!updatingLayouts){
 		updatingLayouts = !updatingLayouts;
 
@@ -126,6 +136,7 @@ function changeSelectedLayouts(){
 			}
 		}
 	}
+	//Re-enable all buttons, and submit updated layout
 	else{
 		updatingLayouts = !updatingLayouts;
 
@@ -150,6 +161,7 @@ function changeSelectedLayouts(){
 	}
 }
 
+//Select all layouts in the list of layouts
 function selectAllLayout(){
 	var element = $('input[name="selectedLayout"]');
 
@@ -160,6 +172,7 @@ function selectAllLayout(){
 	updateSelectedLayouts();
 }
 
+//Remove all selected layouts
 function removeSelectedLayouts(){
 	var element = $('input[name="selectedLayout"]');
 	var toRemove = [];
@@ -182,6 +195,7 @@ function removeSelectedLayouts(){
 	ipcRenderer.send('getLayouts');
 }
 
+//Update list of layouts
 function updateLayouts(){
 
 	$('#layoutTableHeader').html('');

@@ -3,6 +3,7 @@ var selectedImage = 'default.jpg';
 var buttonHtml = "<form id='imageForm'><input type='file' style='display:none' id='productImageChoice' onchange='selectImage();'></form>";
 var checked = [];
 
+//Attach button functions
 $(document).ready(function(){
 	$('#productMod').click(productMod);
 	$('#addProduct').click(addProduct);
@@ -19,6 +20,7 @@ $(document).ready(function(){
 	ipcRenderer.send('getSubCategories');
 });
 
+//Open/close the product menu
 function productMod(){
 	if(!$('#products').is(':visible')){
 		$('#products').css('display', '');
@@ -29,6 +31,7 @@ function productMod(){
 	}
 }
 
+//Open/close the product adding menu
 function addProduct(){
 	if(!$('#addProductMenu').is(':visible')){
 
@@ -53,6 +56,7 @@ function addProduct(){
 	}
 }
 
+//Open/close the category adding menu
 function addCategory(){
 	if(!$('#addCategoryMenu').is(':visible')){
 
@@ -77,6 +81,7 @@ function addCategory(){
 	}
 }
 
+//Add/remove a new category
 function updateCategory(){
 	var category = $('#categoryName').val().toLowerCase().replace(/[^0-9a-z]/gi, '');
 	var checkCategory = category.replace(/ /g, '');
@@ -98,6 +103,7 @@ function updateCategory(){
 	}
 }
 
+//Add/remove sub-category
 function updateSubCategory(){
 	var subCategory = $('#subCategoryName').val().toLowerCase().replace(/[^0-9a-z]/gi, '');
 	var checkSubCategory = subCategory.replace(/ /g, '');
@@ -119,6 +125,7 @@ function updateSubCategory(){
 	}
 }
 
+//Add a new item using given details
 function addNewItem(){
 	var newProduct = {};
 	var valid = true;
@@ -146,6 +153,7 @@ function addNewItem(){
 	}
 	else newProduct['image'] = 'default.jpg';
 
+	//If all inputs are valid, add the item
 	if(valid){
 		$('#productName').val('');
 		$('#productCategory').val(categories[0]);
@@ -165,6 +173,7 @@ function addNewItem(){
 	}
 }
 
+//Select all products for manipulation
 function selectAll(){
 	var element = $('input[name="selected"]');
 
@@ -175,6 +184,7 @@ function selectAll(){
 	updateSelected();
 }
 
+//Update the list of currently selected products
 function updateSelected(){
 	var element = $('input[name="selected"]');
 	checked = [];
@@ -184,10 +194,12 @@ function updateSelected(){
 	}
 }
 
+//Change all selected products to modifying mode
 function updateProducts(){
 	var element = $('input[name="selected"]');
 	var toUpdate = [];
 
+	//Toggle button appearance
 	if(!updatingProducts){
 		$('#updateProducts').html('Apply Changes');
 		$('#updateProducts').toggleClass('btn-default btn-success');
@@ -197,21 +209,27 @@ function updateProducts(){
 		$('#updateProducts').toggleClass('btn-default btn-success');
 	}
 
+	//Disable/enable select all checkbox
 	$('input[name="selectAllBtn"]')[0].disabled = !updatingProducts;
 
+	//Disable/enable all product checkboxes
 	for(var product in element){
 		element[product].disabled = !updatingProducts;
 		if(element[product].value) toUpdate.push(checked.indexOf(element[product].value));
 	}
 
+	//If we are beginning the process of updating products
 	if(!updatingProducts){
 
+		//Disable buttons other than the apply button
 		$('#removeProducts').attr('disabled', 'disabled');
 		$('#addProduct').attr('disabled', 'disabled');
 		$('#addCategory').attr('disabled', 'disabled');
 
+		//For all selected products
 		for(var product in toUpdate){
 			var current = checked[toUpdate[product]];
+			//Convert them to show options for updating
 			if(current){
 				$('#'+checked[toUpdate[product]]).html(
 					'<td><input onclick="updateSelected();" type="checkbox" name="selected" value='+current+' disabled checked></td>'+
@@ -233,6 +251,7 @@ function updateProducts(){
 			updateSelected();
 		}
 	}
+	//Otherwise, re-enable everything, and push all updates
 	else{
 
 		$('[name="selectAllBtn"]').prop('checked', false);
@@ -265,6 +284,7 @@ function updateProducts(){
 	updatingProducts = !updatingProducts;
 }
 
+//Remove all selected products
 function removeSelected(){
 	var element = $('input[name="selected"]');
 	var toRemove = [];
@@ -287,6 +307,7 @@ function removeSelected(){
 	ipcRenderer.send('getProducts');
 }
 
+//Search for a specified product in th eproduct listing
 function findProduct(){
 	var input = $('#tableSearchBox').val();
 	var table = document.getElementById("productTableHeader");
@@ -303,6 +324,7 @@ function findProduct(){
 	}
 }
 
+//Select an image from the users computer, otherwise use default
 function selectImage(){
 
 	var file = 'default.jpg';
@@ -323,6 +345,7 @@ function selectImage(){
 	selectedImage = file;
 }
 
+//Update given products image
 function updateImage(product){
 	var inner = '<input type="file" style="display:none" onchange="updateImage(\''+product+'\');" id="'+product+'Image"></input>';
 	if($('#'+product+'Image')[0]['files'][0]['path']){
