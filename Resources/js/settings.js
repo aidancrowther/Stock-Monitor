@@ -88,6 +88,7 @@ ipcRenderer.on('productList', function(event, args){
 	}
 
 	products = args;
+	drawLayouts();
 });
 //update the list of layouts
 ipcRenderer.on('getLayouts', function(event, args){

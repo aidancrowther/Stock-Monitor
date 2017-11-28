@@ -126,7 +126,7 @@ function addNewItem(){
 	var valid = true;
 
 	if($('#productName').val()){
-		var checkContent = $('#productName').val().replace(/[^0-9a-z]/gi, '').replace(/ /g, '');
+		var checkContent = $('#productName').val().replace(/[^0-9a-z]/gi, '');
 		if(checkContent != '') newProduct['name'] = $('#productName').val().replace(/[^0-9a-z]/gi, '');
 		else valid = false;
 	}

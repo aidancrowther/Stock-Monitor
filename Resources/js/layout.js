@@ -70,6 +70,7 @@ function submitNewLayout(){
 		$('#layoutAddFailure').css('display', '');
 		clearDisplay('#layoutAddFailure');
 	}
+	drawLayouts();
 }
 
 //Search for a layout in the list of layouts
