@@ -8,8 +8,6 @@ $(document).ready(function(){
 	$('#submitLayoutBtn').click(submitNewLayout);
 	$('#removeLayouts').click(removeSelectedLayouts);
 	$('#updateLayouts').click(changeSelectedLayouts);
-
-	ipcRenderer.send('getLayouts');
 });
 
 //Open/close the layout modification menu

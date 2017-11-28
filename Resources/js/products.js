@@ -13,11 +13,6 @@ $(document).ready(function(){
 	$('#addCategory').click(addCategory);
 	$('#updateCategory').click(updateCategory);
 	$('#updateSubCategory').click(updateSubCategory);
-
-	ipcRenderer.send('getProducts');
-	ipcRenderer.send('getImages');
-	ipcRenderer.send('getCategories');
-	ipcRenderer.send('getSubCategories');
 });
 
 //Open/close the product menu
@@ -307,7 +302,7 @@ function removeSelected(){
 	ipcRenderer.send('getProducts');
 }
 
-//Search for a specified product in th eproduct listing
+//Search for a specified product in the product listing
 function findProduct(){
 	var input = $('#tableSearchBox').val();
 	var table = document.getElementById("productTableHeader");

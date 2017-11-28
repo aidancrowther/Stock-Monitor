@@ -16,6 +16,7 @@ if(!fs.existsSync(ROOT+'layouts.json')) fs.writeFileSync(ROOT+'layouts.json', JS
 if(!fs.existsSync(ROOT+'products.json')) fs.writeFileSync(ROOT+'products.json', JSON.stringify(products));
 if(!fs.existsSync(ROOT+'categories.json')) fs.writeFileSync(ROOT+'categories.json', JSON.stringify(categories));
 if(!fs.existsSync(ROOT+'subCategories.json')) fs.writeFileSync(ROOT+'subCategories.json', JSON.stringify(subCategories));
+if(images.indexOf('default.jpg') == -1) copySync('default.jpg', ROOT+'Images/default.jpg');
 
 let win;
 

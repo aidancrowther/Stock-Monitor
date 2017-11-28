@@ -7,6 +7,16 @@ var images = [];
 var categories = [];
 var subCategories = [];
 
+$(document).ready(function(){
+
+	ipcRenderer.send('getProducts');
+	ipcRenderer.send('getImages');
+	ipcRenderer.send('getCategories');
+	ipcRenderer.send('getSubCategories');
+	ipcRenderer.send('getLayouts');
+
+});
+
 //Open the menu when the escape key is pressed
 $(document).keydown(function(e){
 	if(e.keyCode==27){loadMenu();}
@@ -83,4 +93,5 @@ ipcRenderer.on('productList', function(event, args){
 ipcRenderer.on('getLayouts', function(event, args){
 	layouts = args;
 	updateLayouts();
+	drawLayouts();
 });
