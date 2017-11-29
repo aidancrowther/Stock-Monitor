@@ -4,19 +4,21 @@ const url = require('url');
 const fs = require('fs');
 const ROOT = app.getAppPath()+'/Resources/Data/';
 
-var images = fs.readdirSync(ROOT+'/Images/');
-var categories = [];
-var subCategories = [];
-var products = {};
-var layouts = {};
-
 if(!fs.existsSync(ROOT)) fs.mkdirSync(ROOT);
 if(!fs.existsSync(ROOT+'Images/')) fs.mkdirSync(ROOT+'Images/');
+
+var images = fs.readdirSync(ROOT+'/Images/');
+
 if(!fs.existsSync(ROOT+'layouts.json')) fs.writeFileSync(ROOT+'layouts.json', JSON.stringify(layouts));
 if(!fs.existsSync(ROOT+'products.json')) fs.writeFileSync(ROOT+'products.json', JSON.stringify(products));
 if(!fs.existsSync(ROOT+'categories.json')) fs.writeFileSync(ROOT+'categories.json', JSON.stringify(categories));
 if(!fs.existsSync(ROOT+'subCategories.json')) fs.writeFileSync(ROOT+'subCategories.json', JSON.stringify(subCategories));
-if(images.indexOf('default.jpg') == -1) copySync('default.jpg', ROOT+'Images/default.jpg');
+if(images.indexOf('default.jpg') == -1) copySync(ROOT+'../images/default.jpg', ROOT+'Images/default.jpg');
+
+var categories = [];
+var subCategories = [];
+var products = {};
+var layouts = {};
 
 let win;
 
