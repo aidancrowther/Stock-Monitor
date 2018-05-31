@@ -1,4 +1,5 @@
 var updatingProducts = false;
+var descriptionModal = false;
 var selectedImage = 'default.jpg';
 var buttonHtml = "<form id='imageForm'><input type='file' style='display:none' id='productImageChoice' onchange='selectImage();'></form>";
 var checked = [];
@@ -13,6 +14,11 @@ $(document).ready(function(){
 	$('#addCategory').click(addCategory);
 	$('#updateCategory').click(updateCategory);
 	$('#updateSubCategory').click(updateSubCategory);
+	$('#closeDescription').click(function() {showDescriptionModal(false);});
+	$('#saveDescription').click(function() {showDescriptionModal(true);});
+	$('#descriptionModal').on('show.bs.modal', function () {
+ 		$('#descriptionModal').css("margin-top", $(window).height() / 2 - $('.modal-content').height() / 2);
+	});
 });
 
 //Open/close the product menu
@@ -237,8 +243,8 @@ function updateProducts(){
 						'<option value="clearance">Clearance</option>'+
 						'<option value="discontinued">Discontinued</option>'+
 					'</select></td>'+
-					'<td><label id="'+current+'Label" class="imageUpdate btn btn-file btn-default">'+products[current].image+'<input type="file" style="display:none" onchange="updateImage(\''+current+'\');" id="'+current+'Image"></input></label></td>'
-				);
+					'<td><label id="'+current+'Label" class="updateButton btn btn-file btn-default">'+products[current].image+'<input type="file" style="display:none" onchange="updateImage(\''+current+'\');" id="'+current+'Image"></input></label></td>'+
+					'<td><label id="'+current+'DescriptionLabel" class="updateButton btn btn-file btn-default">Description<input type="button" style="display:none" onclick="showDescription(\''+current+'\');" id="'+current+'Description"></input></label></td>'				);
 				$('#'+current+'Status').val(products[current].status);
 				updateCategories(current+'Type', categories.indexOf(products[current].type), categories);
 				updateCategories(current+'SubType', categories.indexOf(products[current].subType), subCategories);
@@ -352,5 +358,30 @@ function updateImage(product){
 			ipcRenderer.send('newImage', [filePath, fileName]);
 			$('#'+product+'Label').html(fileName+inner);
 		}
+	}
+}
+
+//Show product description, allowing for modification
+function showDescription(product){
+	console.log("hit");
+	showDescriptionModal(false);
+}
+
+//Display description modal
+function showDescriptionModal(save){
+
+	console.log(save);
+
+	if(!descriptionModal){
+		$('#descriptionModal').modal('show');
+		loadMenu();
+		descriptionModal = true;
+		settingsModalEnabled = false;
+	}
+	else{
+		$('#descriptionModal').modal('hide');
+		descriptionModal = false;
+		settingsModalEnabled = true;
+		loadMenu();
 	}
 }

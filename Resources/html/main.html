@@ -43,6 +43,7 @@
 										<th class='tablecell'>Product Sub-Category</th>
 										<th class='tablecell'>Product Status</th>
 										<th class='tablecell'>Product Image</th>
+										<th class='tablecell'>Product Description</th>
 									</tr>
 								</thead>
 								<tbody id='productTableHeader'>
@@ -95,6 +96,10 @@
 											Select Image
 											<form id='imageForm'><input type='file' style='display:none' id='productImageChoice' onchange='selectImage();'></form>
 										</label>
+									</div>
+									<div class='form-group form-inline'>
+										<label for='productDescription'>Product Description:</label>
+										<textarea rows="6" cols="60" maxlength="200" class='form-control' id='productDescription' placeholder='Product XYZ Description'></textarea>
 									</div>
 								</div>
 								<button class='btn btn-success' id='addNewItem'>Add Item</button>
@@ -179,6 +184,23 @@
 								</div>
 							</div>
 						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id='descriptionModal' class='modal text-center' data-backdrop='static' role='dialog'>
+			<div class='modal-dialog modal-lg'>
+				<div class='modal-content'>
+					<div class='modal-header'>
+						<h4 class='modal-title'>Description</h4>
+					</div>
+					<div id='dialogBody' class='modal-body'>
+						<textarea rows="6" cols="60" maxlength="200" class='form-control' id='productDescriptionDialog' placeholder='Product XYZ Description'></textarea>
+						<br>
+						<button class='btn btn-danger' id='closeDescription'>Close Without Saving</button>
+						<button class='btn btn-default' id='saveDescription'>Close & Save Changes</button>
+
 					</div>
 				</div>
 			</div>

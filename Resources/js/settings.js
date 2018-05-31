@@ -1,6 +1,7 @@
 ﻿const { ipcRenderer, remote, shell } = require('electron');
 
 var settingsModal = false;
+var settingsModalEnabled = true;
 var products = {};
 var layouts = {};
 var images = [];
@@ -24,13 +25,15 @@ $(document).keydown(function(e){
 
 //Load/Hide the menu based on its current status
 function loadMenu(){
-	if(!settingsModal){
-		$('#settingsModal').modal('show');
-		settingsModal = true;
-	}
-	else{
-		$('#settingsModal').modal('hide');
-		settingsModal = false;
+	if(settingsModalEnabled){
+		if(!settingsModal){
+			$('#settingsModal').modal('show');
+			settingsModal = true;
+		}
+		else{
+			$('#settingsModal').modal('hide');
+			settingsModal = false;
+		}
 	}
 }
 
@@ -83,8 +86,9 @@ ipcRenderer.on('productList', function(event, args){
 			'<td>'+args[key].subType+'</td>'+
 			'<td>'+args[key].status+'</td>'+
 			'<td>'+args[key].image+'</td>'+
+			'<td><label id="'+key+'DescriptionLabel" class="updateButton btn btn-file btn-default">Description<input type="button" style="display:none" onclick="showDescription(\''+key+'\');" id="'+key+'Description"></input></label></td>'+
 			'</tr>';
-		$('#productTableHeader').append(item);
+			$('#productTableHeader').append(item);
 	}
 
 	products = args;
