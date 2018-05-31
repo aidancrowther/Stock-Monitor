@@ -8,8 +8,10 @@ function drawLayouts(){
 		for(var product in products){
 			var current = products[product].name.replace(/ /gi, '_');
 			if(products[product].type == layouts[layout].main && layouts[layout].sub.indexOf(products[product].subType) >= 0){
-				$('#'+layouts[layout].main).append('<div class="product" id="display'+current+'">'+products[product].name+'</div>');
-				$('#display'+current).css('background-image', 'url(../Data/Images/'+products[product].image+')');
+				$('#'+layouts[layout].main).append('<div class="product" id="display'+current+'"></div>');
+				$('#display'+current).append('<img src="../Data/Images/'+products[product].image+'">');
+				$('#display'+current).append('<h3>'+products[product].name+'</h3>');
+				$('#display'+current).append('<p>'+products[product].description.replace(/(?:\r\n|\r|\n)/g, '<br>')+'</p>');
 				switch(products[product].status){
 					case "default":
 						$('#display'+current).css('background-color', 'yellow');
