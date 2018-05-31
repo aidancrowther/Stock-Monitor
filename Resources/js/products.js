@@ -1,5 +1,6 @@
 var updatingProducts = false;
 var descriptionModal = false;
+var descriptionUnderUpdate = '';
 var selectedImage = 'default.jpg';
 var buttonHtml = "<form id='imageForm'><input type='file' style='display:none' id='productImageChoice' onchange='selectImage();'></form>";
 var checked = [];
@@ -14,8 +15,8 @@ $(document).ready(function(){
 	$('#addCategory').click(addCategory);
 	$('#updateCategory').click(updateCategory);
 	$('#updateSubCategory').click(updateSubCategory);
-	$('#closeDescription').click(function() {showDescriptionModal(false);});
-	$('#saveDescription').click(function() {showDescriptionModal(true);});
+	$('#closeDescription').click(function() {showDescription(false);});
+	$('#saveDescription').click(function() {showDescription(true);});
 	$('#descriptionModal').on('show.bs.modal', function () {
  		$('#descriptionModal').css("margin-top", $(window).height() / 2 - $('.modal-content').height() / 2);
 	});
@@ -132,8 +133,8 @@ function addNewItem(){
 	var valid = true;
 
 	if($('#productName').val()){
-		var checkContent = $('#productName').val().replace(/[^0-9a-z]/gi, '');
-		if(checkContent != '') newProduct['name'] = $('#productName').val().replace(/[^0-9a-z]/gi, '');
+		var checkContent = $('#productName').val().replace(/[^\w\s]/gi, '');
+		if(checkContent != '') newProduct['name'] = $('#productName').val().replace(/[^\w\s]/gi, '');
 		else valid = false;
 	}
 	else valid = false;
@@ -153,6 +154,10 @@ function addNewItem(){
 		newProduct['image'] = selectedImage;
 	}
 	else newProduct['image'] = 'default.jpg';
+	if($('#productDescription').val()){
+		newProduct['description'] = $('#productDescription').val();
+	}
+	else valid = false;
 
 	//If all inputs are valid, add the item
 	if(valid){
@@ -162,6 +167,7 @@ function addNewItem(){
 		$('#productStatus').val('default');
 		$('#imageForm')[0].reset();
 		$('#productImage').html('Select Image'+buttonHtml);
+		$('#productDescription').val('');
 
 		$('#itemAddSuccess').css('display', '');
 		clearDisplay('#itemAddSuccess');
@@ -361,16 +367,8 @@ function updateImage(product){
 	}
 }
 
-//Show product description, allowing for modification
-function showDescription(product){
-	console.log("hit");
-	showDescriptionModal(false);
-}
-
 //Display description modal
-function showDescriptionModal(save){
-
-	console.log(save);
+function showDescription(input){
 
 	if(!descriptionModal){
 		$('#descriptionModal').modal('show');
@@ -383,5 +381,19 @@ function showDescriptionModal(save){
 		descriptionModal = false;
 		settingsModalEnabled = true;
 		loadMenu();
+	}
+
+	if(typeof(input) == 'boolean'){
+		if(input){
+			products[descriptionUnderUpdate]['description'] = $('#productDescriptionDialog').val();
+			ipcRenderer.send('removeItems', [descriptionUnderUpdate]);
+			ipcRenderer.send('newItem', products[descriptionUnderUpdate]);
+		}
+
+		descriptionUnderUpdate = '';
+	}
+	else{
+		$('#productDescriptionDialog').val(products[input]['description']);
+		descriptionUnderUpdate = input;
 	}
 }
