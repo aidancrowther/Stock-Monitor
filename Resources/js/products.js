@@ -27,6 +27,7 @@ function productMod(){
 	if(!$('#products').is(':visible')){
 		$('#products').css('display', '');
 		$('#layout').css('display', 'none');
+		$('#display').css('display', 'none');
 	}
 	else{
 		$('#products').css('display', 'none');

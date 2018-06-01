@@ -3,6 +3,18 @@ body{
 	margin: 2% 0% 0% 0%;
 }
 
+.layoutMain{
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+.layoutMain h2{
+	font-weight: bold;
+	text-decoration: underline;
+	text-align: center;
+	padding-bottom: 14px;
+}
+
 .product{
 	box-shadow: 2px 2px black;
 	background-color: #868c8a;
@@ -22,7 +34,7 @@ body{
     max-height: 100%;
 }
 
-.product h3{
+.product h4{
 	font-weight: bold;
 	text-decoration: underline;
 	text-align: center;

@@ -4,6 +4,7 @@ var settingsModal = false;
 var settingsModalEnabled = true;
 var products = {};
 var layouts = {};
+var displays = [];
 var images = [];
 var categories = [];
 var subCategories = [];
@@ -15,6 +16,7 @@ $(document).ready(function(){
 	ipcRenderer.send('getCategories');
 	ipcRenderer.send('getSubCategories');
 	ipcRenderer.send('getLayouts');
+	ipcRenderer.send('getDisplays');
 
 });
 
@@ -64,6 +66,7 @@ ipcRenderer.on('getCategories', function(event, args){
 	categories = args;
 	updateCategories('productCategory', 0, categories);
 	updateCategories('layoutMain', 0, categories);
+	updateCategories('displayCategory', -1, categories);
 });
 
 //Update list of sub-categories upon receiving them
@@ -94,9 +97,16 @@ ipcRenderer.on('productList', function(event, args){
 	products = args;
 	drawLayouts();
 });
+
 //update the list of layouts
 ipcRenderer.on('getLayouts', function(event, args){
 	layouts = args;
 	updateLayouts();
+	drawLayouts();
+});
+
+ipcRenderer.on('getDisplays', function(event, args){
+	displays = args;
+	updateDisplays();
 	drawLayouts();
 });

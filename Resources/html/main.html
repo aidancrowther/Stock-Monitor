@@ -10,13 +10,14 @@
 		<script src='../js/settings.js'></script>
 		<script src='../js/products.js'></script>
 		<script src='../js/layout.js'></script>
+		<script src='../js/display.js'></script>
 		<script src='../js/generator.js'></script>
 		<title>Test Page</title>
 	</head>
 	<body>
 		<div class='container-fluid'>
 			<div class='row'>
-				<div class='col-md-12' id="display-1">
+				<div class='col-md-12' id="productDisplay">
 				</div>
 			</div>
 		</div>
@@ -181,6 +182,39 @@
 										</select>
 									</div>
 									<button class='btn btn-success' id='submitLayoutBtn'>Submit Layout</button>
+								</div>
+							</div>
+						</div>
+						<div id='display' style='display:none'>
+							<hr>
+							<table class='table table-striped table-fixedheader modTable' id='displayTable'>
+								<thead>
+									<tr>
+										<th class='tablecell'>Select<br><input onclick="selectAllDisplay();" type="checkbox" name="selectAllDisplayBtn"></th>
+										<th class='tablecell' width: 'auto'>Window Category(s)</th>
+									</tr>
+								</thead>
+								<tbody id='displayTableHeader'>
+								</tbody>
+							</table>
+							<button class='btn btn-danger' id='removeDisplay'>Remove Selected</button>
+							<button class='btn btn-default' id='updateDisplay'>Update Selected</button>
+							<button class='btn btn-default' id='addDisplay'>Add Window</button>
+							<div id='addDisplayMenu' style='display:none;'>
+								<hr>
+								<div id='displayDetails'>
+									<div class='alert alert-success' id='displayAddSuccess' style='display:none'>
+										<strong>Success!</strong> New window added
+									</div>
+									<div class='alert alert-danger' id='displayAddFailure' style='display:none'>
+										<strong>Error!</strong> Unable to add specified window
+									</div>
+									<div class='form-group form-inline'>
+										<label for='displayCategory'>Window Category(s):</label>
+										<select multiple class='form-control' id='displayCategory' size='7'>
+										</select>
+									</div>
+									<button class='btn btn-success' id='submitDisplayBtn'>Submit Window</button>
 								</div>
 							</div>
 						</div>

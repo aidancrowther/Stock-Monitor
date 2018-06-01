@@ -13,11 +13,13 @@ var categories = [];
 var subCategories = [];
 var products = {};
 var layouts = {};
+var displays = [];
 
 if(!fs.existsSync(ROOT+'layouts.json')) fs.writeFileSync(ROOT+'layouts.json', JSON.stringify(layouts));
 if(!fs.existsSync(ROOT+'products.json')) fs.writeFileSync(ROOT+'products.json', JSON.stringify(products));
 if(!fs.existsSync(ROOT+'categories.json')) fs.writeFileSync(ROOT+'categories.json', JSON.stringify(categories));
 if(!fs.existsSync(ROOT+'subCategories.json')) fs.writeFileSync(ROOT+'subCategories.json', JSON.stringify(subCategories));
+if(!fs.existsSync(ROOT+'displays.json')) fs.writeFileSync(ROOT+'displays.json', JSON.stringify(displays));
 if(images.indexOf('default.jpg') == -1) copySync(ROOT+'../images/default.jpg', ROOT+'Images/default.jpg');
 
 let win;
@@ -90,7 +92,7 @@ ipcMain.on('getImages', function(){
 
 //Add the specified category to the list of categories
 ipcMain.on('newCategory', function(event, args){
-	if(categories.indexOf(args) <= 0){
+	if(categories.indexOf(args) < 0){
 		categories.push(args);
 		updateCategories();
 	}
@@ -98,7 +100,7 @@ ipcMain.on('newCategory', function(event, args){
 
 //Add the specified sub-category
 ipcMain.on('newSubCategory', function(event, args){
-	if(subCategories.indexOf(args) <= 0){
+	if(subCategories.indexOf(args) < 0){
 		subCategories.push(args);
 		updateSubCategories();
 	}
@@ -155,6 +157,28 @@ ipcMain.on('removeLayouts', function(event, args){
 	fs.writeFileSync(ROOT+'layouts.json', JSON.stringify(layouts));
 });
 
+//Return a list of all displays
+ipcMain.on('getLayouts', function(event, args){
+	if(!Object.keys(displays).length) displays = JSON.parse(fs.readFileSync(ROOT+'displays.json'));
+	win.webContents.send('getDisplays', displays);
+});
+
+//Add the specified display
+ipcMain.on('addDisplay', function(event, args){
+	if(displays.indexOf(args) < 0){
+		displays.push(args);
+		updateDisplays();
+	}
+});
+
+//Remove the specified display
+ipcMain.on('removeDisplay', function(event, args){
+	if(indexOfObj(displays, args) >= 0){
+		displays.splice(indexOfObj(displays, args), 1);
+		updateDisplays();
+	}
+});
+
 //update the list of categories
 function updateCategories(){
 	fs.writeFileSync(ROOT+'categories.json', JSON.stringify(categories));
@@ -169,6 +193,12 @@ function updateSubCategories(){
 	win.webContents.send('getSubCategories', subCategories);
 }
 
+function updateDisplays(){
+	fs.writeFileSync(ROOT+'displays.json', JSON.stringify(displays));
+	displays = JSON.parse(fs.readFileSync(ROOT+'displays.json'));
+	win.webContents.send('getDisplays', displays);
+}
+
 //synchronously copy a file
 function copySync(src, dest){
 	if (!fs.existsSync(src)) console.log('Source doesn\'t exist');
@@ -177,4 +207,12 @@ function copySync(src, dest){
 	var outStr = fs.createWriteStream(dest);
 
 	inStr.pipe(outStr);
+}
+
+function indexOfObj(arr, o) {    
+	var match = true;
+    for (var i = 0; i < arr.length; i++) {
+    	if(arr[i]['id'] == o['id']) return i;
+    }
+    return -1;
 }
