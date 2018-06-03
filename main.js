@@ -36,10 +36,11 @@ function createWindow(){
 		slashes: true
 	}));
 
-	win.webContents.openDevTools();
+	//win.webContents.openDevTools();
 
 	win.on('closed', () => {
 		win = null;
+		app.quit();
 	});
 
 }
@@ -158,7 +159,7 @@ ipcMain.on('removeLayouts', function(event, args){
 });
 
 //Return a list of all displays
-ipcMain.on('getLayouts', function(event, args){
+ipcMain.on('getDisplays', function(event, args){
 	if(!Object.keys(displays).length) displays = JSON.parse(fs.readFileSync(ROOT+'displays.json'));
 	win.webContents.send('getDisplays', displays);
 });
@@ -196,7 +197,7 @@ function updateSubCategories(){
 function updateDisplays(){
 	fs.writeFileSync(ROOT+'displays.json', JSON.stringify(displays));
 	displays = JSON.parse(fs.readFileSync(ROOT+'displays.json'));
-	win.webContents.send('getDisplays', displays);
+	win.webContents.send('updateDisplays', displays);
 }
 
 //synchronously copy a file

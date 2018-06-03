@@ -7,6 +7,7 @@ $(document).ready(function(){
 	$('#submitDisplayBtn').click(submitNewDisplay);
 	$('#removeDisplay').click(removeSelectedDisplay);
 	$('#updateDisplay').click(changeSelectedDisplay);
+	$('#showDisplays').click(() => {ipcRenderer.send('getDisplays')} );
 });
 
 //Open/close the display modification menu
@@ -27,6 +28,7 @@ function addDisplay(){
 
 		$('#removeDisplay').attr('disabled', 'disabled');
 		$('#updateDisplay').attr('disabled', 'disabled');
+		$('#showDisplays').attr('disabled', 'disabled');
 
 		$('#addDisplayMenu').css('display', '');
 		$('#displayTable').css('display', 'none');
@@ -36,6 +38,7 @@ function addDisplay(){
 
 		$('#removeDisplay').removeAttr('disabled');
 		$('#updateDisplay').removeAttr('disabled');
+		$('#showDisplays').removeAttr('disabled');
 
 		$('#addDisplayMenu').css('display', 'none');
 		$('#displayTable').css('display', '');
@@ -99,6 +102,7 @@ function changeSelectedDisplay(){
 
 		$('#removeDisplay').attr('disabled', 'disabled');
 		$('#addDisplay').attr('disabled', 'disabled');
+		$('#showDisplays').attr('disabled', 'disabled');
 		$('#updateDisplay').html('Apply Changes');
 		$('#updateDisplay').toggleClass('btn-default btn-success');
 
@@ -119,6 +123,7 @@ function changeSelectedDisplay(){
 
 		$('#removeDisplay').removeAttr('disabled');
 		$('#addDisplay').removeAttr('disabled');
+		$('#showDisplays').removeAttr('disabled');
 		$('#updateDisplay').html('Update Selected');
 		$('#updateDisplay').toggleClass('btn-default btn-success');
 
@@ -134,7 +139,6 @@ function changeSelectedDisplay(){
 		$('[name="selectAllDisplayBtn"]').prop('checked', false);
 
 		updateSelectedDisplays();
-		ipcRenderer.send('getDisplays');
 	}
 }
 
@@ -169,7 +173,6 @@ function removeSelectedDisplay(){
 
 	$('[name="selectAllDisplayBtn"]').prop('checked', false);
 	for(var item in list) ipcRenderer.send('removeDisplay', displays[list[item]]);
-	ipcRenderer.send('getDisplays');
 }
 
 //Update list of displays

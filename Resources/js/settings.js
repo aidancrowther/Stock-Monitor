@@ -1,4 +1,5 @@
 ﻿const { ipcRenderer, remote, shell } = require('electron');
+const { BrowserWindow } = require('electron').remote;
 
 var settingsModal = false;
 var settingsModalEnabled = true;
@@ -105,6 +106,13 @@ ipcRenderer.on('getLayouts', function(event, args){
 	drawLayouts();
 });
 
+//update the list of displays
+ipcRenderer.on('updateDisplays', function(event, args){
+	displays = args;
+	updateDisplays();
+});
+
+//update and display displays
 ipcRenderer.on('getDisplays', function(event, args){
 	displays = args;
 	updateDisplays();
