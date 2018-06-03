@@ -25,9 +25,10 @@ Roadmap:
    - [ ] Implement autoscrolling
    - [ ] Prepare release distribution
    
-Requirements:
+Requirements (Dev):
 
-    - The use of Stock Monitor is currently reliant on the use of electron and nodeJS, however; on full release there will be no need to download these.
+    - NodeJS
+    - Electron
    
 Install (Dev):
 
