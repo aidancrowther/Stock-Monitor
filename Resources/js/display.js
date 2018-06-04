@@ -49,6 +49,7 @@ function addDisplay(){
 //Add the new display to the list of displays
 function submitNewDisplay(){
 	var newDisplay = {};
+	newDisplay['scrollTime'] = [];
 	var valid = true;
 
 	if($('#displayCategory').val().length){
@@ -57,9 +58,15 @@ function submitNewDisplay(){
 		newDisplay['categories'] = $('#displayCategory').val();
 	}
 	else valid = false;
+	if($('#displayScrollSpeed').val() == "") newDisplay['scrollTime'].push(0);
+	else newDisplay['scrollTime'].push(parseInt($('#displayScrollSpeed').val()));
+	if($('#displayDelay').val() == "") newDisplay['scrollTime'].push(0);
+	else newDisplay['scrollTime'].push(parseInt($('#displayDelay').val()));
 
 	if(valid){
 		$('#displayCategory').val('');
+		$('#displayScrollSpeed').val('');
+		$('#displayDelay').val('');
 
 		$('#displayAddSuccess').css('display', '');
 		clearDisplay('#displayAddSuccess');
@@ -108,10 +115,13 @@ function changeSelectedDisplay(){
 
 		for(var display in toUpdate){
 			var current = checkedDisplays[toUpdate[display]];
+			console.log(toUpdate[display]);
 			if(current){
 				$('#'+current+'Display').html(
 					'<td><input onclick="updateSelectedDisplays();" type="checkbox" name="selectedDisplay" value='+current+' disabled checked></td>'+
-					'<td><select multiple class="form-control" id="'+current+'DisplayCat" size="3"></select></td>'
+					'<td><select multiple class="form-control" id="'+current+'DisplayCat" size="3"></select></td>'+
+					'<td><input class="form-control" id="'+current+'Speed" type="number" value="'+displays[current].scrollTime[0]+'"></td>'+
+					'<td><input class="form-control" id="'+current+'Delay" type="number" value="'+displays[current].scrollTime[1]+'"></td>'
 				)
 				updateCategories(current+'DisplayCat', categories.indexOf(displays[current].categories[0]), categories);
 			}
@@ -132,6 +142,10 @@ function changeSelectedDisplay(){
 			if(current){
 				ipcRenderer.send('removeDisplay', displays[current]);
 				if($('#'+current+'DisplayCat').val().length > 0) displays[current].categories = $('#'+current+'DisplayCat').val();
+				if($('#'+current+'Speed').val() == "") displays[current].scrollTime[0] = 0;
+				else displays[current].scrollTime[0] = $('#'+current+'Speed').val();
+				if($('#'+current+'Delay').val() == "") displays[current].scrollTime[1] = 0;
+				else displays[current].scrollTime[1] = $('#'+current+'Delay').val();
 				ipcRenderer.send('addDisplay', displays[current]);
 			}
 		}
@@ -185,6 +199,8 @@ function updateDisplays(){
 		var item = '<tr id="'+display.replace(/ /g, '_')+'Display">'+
 			'<td><input onclick="updateSelectedDisplays();" type="checkbox" name="selectedDisplay" value='+display.replace(/ /g, '_')+alreadySelected+'></td>'+
 			'<td>'+displays[display].categories+'</td>'+
+			'<td>'+displays[display].scrollTime[0]+'</td>'+
+			'<td>'+displays[display].scrollTime[1]+'</td>'+
 			'</tr>';
 		$('#displayTableHeader').append(item);
 	}

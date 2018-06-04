@@ -192,6 +192,8 @@
 									<tr>
 										<th class='tablecell'>Select<br><input onclick="selectAllDisplay();" type="checkbox" name="selectAllDisplayBtn"></th>
 										<th class='tablecell' width: 'auto'>Window Category(s)</th>
+										<th class='tablecell'>Scroll Speed (ms)</th>
+										<th class='tablecell'>Scroll Delay (ms)</th>
 									</tr>
 								</thead>
 								<tbody id='displayTableHeader'>
@@ -214,6 +216,10 @@
 										<label for='displayCategory'>Window Category(s):</label>
 										<select multiple class='form-control' id='displayCategory' size='7'>
 										</select>
+										<label for='displayScrollSpeed'>Scroll Speed (ms)</label>
+										<input class='form-control' id='displayScrollSpeed' placeholder='2000' type='number'>
+										<label for='displayDelay'>Scroll Delay (ms)</label>
+										<input class='form-control' id='displayDelay' placeholder='2000' type = 'number'>
 									</div>
 									<button class='btn btn-success' id='submitDisplayBtn'>Submit Window</button>
 								</div>

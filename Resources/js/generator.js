@@ -1,7 +1,8 @@
 const url = require('url');
 const path = require('path');
+
 var openDisplays = [];
-var test = 0;
+var interval;
 
 //Draw all layouts to all displays
 function drawLayouts(){
@@ -31,7 +32,7 @@ function drawLayouts(){
 				}
 			}
 
-			if(display == 0) drawLayout(winLayouts, products);
+			if(display == 0) drawLayout(winLayouts, products, displays[display].scrollTime);
 			else{
 				let win = new BrowserWindow({width:800, height:600});
 
@@ -48,7 +49,7 @@ function drawLayouts(){
 				let childWinLayouts = winLayouts;
 
 				win.webContents.on('did-finish-load', () => {
-				    win.webContents.send('drawWindow', [childWinLayouts, products]);
+				    win.webContents.send('drawWindow', [childWinLayouts, products, displays[display].scrollTime]);
 				});
 
 				openDisplays.push(win);
@@ -58,7 +59,7 @@ function drawLayouts(){
 }
 
 //Draw the given products from a layout onto the window
-function drawLayout(layouts, products){
+function drawLayout(layouts, products, scrollTime){
 	var display = $('#productDisplay');
 	display.html("");
 
@@ -95,4 +96,13 @@ function drawLayout(layouts, products){
 			}
 		}
 	}
+
+	if(interval) clearInterval(interval);
+	if(scrollTime) interval = setInterval(function(){scroll(scrollTime[0], scrollTime[1])}, (scrollTime[0] * 2) + (scrollTime[1] * 2));
+}
+
+function scroll(speed, delay) {
+    $('html, body').animate({ scrollTop: $(document).height() - $(window).height() }, speed, function() {
+    	setTimeout(() => {$(this).animate({ scrollTop: 0 }, speed)}, delay);
+    });
 }
