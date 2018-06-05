@@ -21,7 +21,7 @@ Roadmap:
    - [X] Implement layout management
    - [X] Implement window management
    - [X] Implement product displays
-   - [ ] Complete README
+   - [X] Complete README
    - [X] Implement autoscrolling
    - [ ] Prepare release distribution
    
