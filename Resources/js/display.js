@@ -115,7 +115,6 @@ function changeSelectedDisplay(){
 
 		for(var display in toUpdate){
 			var current = checkedDisplays[toUpdate[display]];
-			console.log(toUpdate[display]);
 			if(current){
 				$('#'+current+'Display').html(
 					'<td><input onclick="updateSelectedDisplays();" type="checkbox" name="selectedDisplay" value='+current+' disabled checked></td>'+
@@ -143,9 +142,9 @@ function changeSelectedDisplay(){
 				ipcRenderer.send('removeDisplay', displays[current]);
 				if($('#'+current+'DisplayCat').val().length > 0) displays[current].categories = $('#'+current+'DisplayCat').val();
 				if($('#'+current+'Speed').val() == "") displays[current].scrollTime[0] = 0;
-				else displays[current].scrollTime[0] = $('#'+current+'Speed').val();
+				else displays[current].scrollTime[0] = parseInt($('#'+current+'Speed').val());
 				if($('#'+current+'Delay').val() == "") displays[current].scrollTime[1] = 0;
-				else displays[current].scrollTime[1] = $('#'+current+'Delay').val();
+				else displays[current].scrollTime[1] = parseInt($('#'+current+'Delay').val());
 				ipcRenderer.send('addDisplay', displays[current]);
 			}
 		}
