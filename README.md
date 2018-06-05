@@ -14,6 +14,7 @@ Status:
    - Multiple Categories per window
    - Multiple windows supported
    - Windows can share categories and subcategories
+   - Displays will automatically scroll the page at user given intervals
    
 Roadmap:
 
