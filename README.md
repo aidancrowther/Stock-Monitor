@@ -47,6 +47,7 @@ Install (Dev):
 Usage:
 
    After running the application, you will be presented with a blank window. Management of all Stock Monitor features is handled through a menu opened by pressing the escape key. This menu will allow you to control all required settings, with breakdown as follows:
+   
    __Modify Products__
     - Open the 'Modify Products' menu. You will see an empty table, with options to add and remove products at the bottom.
     - Add a product category and sub category in the Add/Remove Category Sub-Menu, as these are required (Ex: Category->Bakery, SubCategory->Cakes).
