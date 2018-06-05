@@ -49,6 +49,7 @@ Usage:
    After running the application, you will be presented with a blank window. Management of all Stock Monitor features is handled through a menu opened by pressing the escape key. This menu will allow you to control all required settings, with breakdown as follows:
    
    __Modify Products__
+   
     - Open the 'Modify Products' menu. You will see an empty table, with options to add and remove products at the bottom.
     - Add a product category and sub category in the Add/Remove Category Sub-Menu, as these are required (Ex: Category->Bakery, SubCategory->Cakes).
     - Now you can add your first product in the add product SubMenu, specifying product parameters such as a name, categories, image, and description, as well as product status.
@@ -57,6 +58,7 @@ Usage:
       - By selecting products in this table using the radio buttons, you can modify and/or remove product entries using the buttons below the table.
 
   __Modify Layout__
+  
     - Open the 'Modify Layout' menu. You will see an empty table, with options to add and remove layouts at the bottom.
     - Layouts combine Categories and SubCategories for display purposes, allowing you to specify which SubCategories to display within each MainCategory.
     - Only products that fall within both the specified Category and SubCategories will be displayed in the layout
@@ -64,6 +66,7 @@ Usage:
     - All layouts are then placed within the layouts table, where tehy can be updated, removed, and searched as with the products table.
     
   __Display Settings__
+  
     - Open the 'Display Settings' menu. You will see an empty table, with options to add and remove displays at the bottom.
     - Displays specify which layouts will appear within a given display window. You can have as many layouts per window as you would like, with layouts shared between windows.
       - Each additional display past the first one will open a new Stock Monitor window with the specified layouts.
