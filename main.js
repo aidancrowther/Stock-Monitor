@@ -27,7 +27,11 @@ let win;
 //Create main display window
 function createWindow(){
 
-	win = new BrowserWindow({width:800, height:600});
+	win = new BrowserWindow({
+		width:800, 
+		height:600,
+		webPreferences:{ nodeIntegration: true }
+	});
 
 	//Load main.html
 	win.loadURL(url.format({
