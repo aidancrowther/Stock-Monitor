@@ -22,6 +22,9 @@ if(!fs.existsSync(ROOT+'subCategories.json')) fs.writeFileSync(ROOT+'subCategori
 if(!fs.existsSync(ROOT+'displays.json')) fs.writeFileSync(ROOT+'displays.json', JSON.stringify(displays));
 if(images.indexOf('default.jpg') == -1) copySync(ROOT+'../images/default.jpg', ROOT+'Images/default.jpg');
 
+let devMode = false;
+if (process.argv.includes("--dev")) devMode = true;
+
 let win;
 
 //Create main display window
@@ -43,7 +46,7 @@ function createWindow(){
 		slashes: true
 	}));
 
-	win.webContents.openDevTools();
+	if(devMode) win.webContents.openDevTools();
 
 	win.on('closed', () => {
 		win = null;

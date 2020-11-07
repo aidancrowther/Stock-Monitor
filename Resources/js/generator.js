@@ -34,7 +34,14 @@ function drawLayouts(){
 
 			if(display == 0) drawLayout(winLayouts, products, displays[display].scrollTime);
 			else{
-				let win = new BrowserWindow({width:800, height:600});
+				let win = new BrowserWindow({
+					width:800, 
+					height:600,
+					webPreferences:{ 
+						nodeIntegration: true,
+						enableRemoteModule: true
+					}
+				});
 
 				win.loadURL(url.format({
 					pathname: path.join('./', 'Resources/html/secondary.html'), 
