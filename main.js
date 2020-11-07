@@ -30,7 +30,10 @@ function createWindow(){
 	win = new BrowserWindow({
 		width:800, 
 		height:600,
-		webPreferences:{ nodeIntegration: true }
+		webPreferences:{ 
+			nodeIntegration: true,
+			enableRemoteModule: true
+		}
 	});
 
 	//Load main.html
