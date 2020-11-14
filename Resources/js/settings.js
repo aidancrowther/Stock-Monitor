@@ -9,6 +9,7 @@ var displays = [];
 var images = [];
 var categories = [];
 var subCategories = [];
+const statuses = ['default', 'sale', 'clearance', 'discontinued'];
 
 $(document).ready(function(){
 
@@ -44,6 +45,7 @@ function loadMenu(){
 function updateCategories(selectMenu, defaultSelection, chosenCategory){
 	$('#'+selectMenu).html('');
 	var defaultOption = '';
+
 	for(var category in chosenCategory){
 		defaultOption = '';
 		if(category == defaultSelection) defaultOption = 'selected';
@@ -79,6 +81,9 @@ ipcRenderer.on('getSubCategories', function(event, args){
 
 //Update list of products, and add each product to the product table
 ipcRenderer.on('productList', function(event, args){
+
+	if(updatingProducts) return;
+
 	$('#productTableHeader').html('');
 
 	for(var key in args){

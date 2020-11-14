@@ -99,6 +99,9 @@ function drawLayout(layouts, products, scrollTime){
 							$('#display'+current).css('background-color', 'red');
 							break;
 					}
+					$('#display'+current).on("click", {"item": current}, (e) => {
+						loadUpdateModal(e.data.item);
+					});
 				}
 			}
 		}

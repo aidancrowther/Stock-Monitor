@@ -10,7 +10,10 @@ $(document).ready(function(){
 	$('#productMod').click(productMod);
 	$('#addProduct').click(addProduct);
 	$('#addNewItem').click(addNewItem);
-	$('#updateProducts').click(updateProducts);
+	$('#updateProducts').click(() => {
+		updatingProducts = !updatingProducts;
+		updateProducts();
+	});
 	$('#removeProducts').click(removeSelected);
 	$('#addCategory').click(addCategory);
 	$('#updateCategory').click(updateCategory);
@@ -20,6 +23,8 @@ $(document).ready(function(){
 	$('#descriptionModal').on('show.bs.modal', function () {
  		$('#descriptionModal').css("margin-top", $(window).height() / 2 - $('.modal-content').height() / 2);
 	});
+	$('#saveUpdate').on("click", () => {closeUpdateModal(true)});
+	$('#cancelUpdate').on("click", () => {closeUpdateModal(false)});
 });
 
 //Open/close the product menu
@@ -208,7 +213,7 @@ function updateProducts(){
 	var toUpdate = [];
 
 	//Toggle button appearance
-	if(!updatingProducts){
+	if(updatingProducts){
 		$('#updateProducts').html('Apply Changes');
 		$('#updateProducts').toggleClass('btn-default btn-success');
 	}
@@ -227,7 +232,7 @@ function updateProducts(){
 	}
 
 	//If we are beginning the process of updating products
-	if(!updatingProducts){
+	if(updatingProducts){
 
 		//Disable buttons other than the apply button
 		$('#removeProducts').attr('disabled', 'disabled');
@@ -254,7 +259,7 @@ function updateProducts(){
 					'<td><label id="'+current+'DescriptionLabel" class="updateButton btn btn-file btn-default">Description<input type="button" style="display:none" onclick="showDescription(\''+current+'\');" id="'+current+'Description"></input></label></td>'				);
 				$('#'+current+'Status').val(products[current].status);
 				updateCategories(current+'Type', categories.indexOf(products[current].type), categories);
-				updateCategories(current+'SubType', categories.indexOf(products[current].subType), subCategories);
+				updateCategories(current+'SubType', subCategories.indexOf(products[current].subType), subCategories);
 			}
 			updateSelected();
 		}
@@ -279,6 +284,7 @@ function updateProducts(){
 					'subType': $('#'+current+'SubType').val(),
 					'status': $('#'+current+'Status').val(),
 					'image': finalImage,
+					'description': products[current]['description']
 				};
 			}
 			if(current){
@@ -288,8 +294,6 @@ function updateProducts(){
 		}
 		updateSelected();
 	}
-
-	updatingProducts = !updatingProducts;
 }
 
 //Remove all selected products
@@ -397,4 +401,44 @@ function showDescription(input){
 		$('#productDescriptionDialog').val(products[input]['description']);
 		descriptionUnderUpdate = input;
 	}
+}
+
+// Close the update modal
+function closeUpdateModal(save){
+	if(save){
+
+		let image = products[descriptionUnderUpdate].image;
+
+		products[descriptionUnderUpdate] = {
+			'name': $('#updateProductName').val(),
+			'type': $('#updateProductCategory').val(),
+			'subType': $('#updateProductSubCategory').val(),
+			'status': $('#updateProductStatus').val(),
+			'image': image,
+			'description': $('#updateProductDescription').val()
+		};
+
+		ipcRenderer.send('removeItems', [descriptionUnderUpdate]);
+		ipcRenderer.send('newItem', products[descriptionUnderUpdate]);
+
+		$('#updateModal').modal('hide');
+	} else {
+		$('#updateModal').modal('hide');
+	}
+
+	descriptionUnderUpdate = '';
+}
+
+// Load the updater modal for the selected item
+function loadUpdateModal(product){
+
+	descriptionUnderUpdate = product;
+
+	$('#updateProductName').val(products[product].name);
+	$('#updateProductDescription').val(products[product].description);
+	updateCategories('updateProductCategory', categories.indexOf(products[product].type), categories);
+	updateCategories('updateProductSubCategory', subCategories.indexOf(products[product].subType), subCategories);
+	updateCategories('updateProductStatus', statuses.indexOf(products[product].status), statuses);
+
+	$('#updateModal').modal('show');
 }
